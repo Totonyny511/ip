@@ -1,12 +1,11 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
  * Starts the Tony chatbot application.
  */
 public class Tony {
-    /** Maximum number of tasks that can be kept while the program is running. */
-    private static final int MAX_TASKS = 100;
-
     /**
      * Displays Tony's greeting, stores entered tasks, lists them on request,
      * and exits when the user enters {@code bye}.
@@ -27,8 +26,7 @@ public class Tony {
         System.out.println(line);
 
         Scanner scanner = new Scanner(System.in);
-        Task[] tasks = new Task[MAX_TASKS];
-        int numberOfTasks = 0;
+        ArrayList<Task> tasks = new ArrayList<>();
 
         while (scanner.hasNextLine()) {
             String command = scanner.nextLine();
@@ -42,22 +40,21 @@ public class Tony {
 
             try {
                 if (command.equals("list")) {
-                    printTasks(tasks, numberOfTasks);
+                    printTasks(tasks);
                 } else if (isCommand(command, "mark")) {
-                    markTask(command, tasks, numberOfTasks);
+                    markTask(command, tasks);
                 } else if (isCommand(command, "unmark")) {
-                    unmarkTask(command, tasks, numberOfTasks);
+                    unmarkTask(command, tasks);
+                } else if (isCommand(command, "delete")) {
+                    deleteTask(command, tasks);
                 } else if (isCommand(command, "todo")) {
-                    addTask(tasks, numberOfTasks, createTodo(command));
-                    numberOfTasks++;
+                    addTask(tasks, createTodo(command));
                 } else if (isCommand(command, "deadline")) {
-                    addTask(tasks, numberOfTasks, createDeadline(command));
-                    numberOfTasks++;
+                    addTask(tasks, createDeadline(command));
                 } else if (isCommand(command, "event")) {
-                    addTask(tasks, numberOfTasks, createEvent(command));
-                    numberOfTasks++;
+                    addTask(tasks, createEvent(command));
                 } else {
-                    throw new TonyException("I don't recognize that command. Try todo, deadline, event, list, mark, unmark, or bye.");
+                    throw new TonyException("I don't recognize that command. Try todo, deadline, event, list, mark, unmark, delete, or bye.");
                 }
             } catch (TonyException exception) {
                 System.out.println("Oops: " + exception.getMessage());
@@ -69,32 +66,26 @@ public class Tony {
     /**
      * Prints each stored task with its completion status and one-based number.
      *
-     * @param tasks the array containing stored tasks
-     * @param numberOfTasks how many positions in {@code tasks} contain tasks
+     * @param tasks the tasks currently stored in the list
      */
-    private static void printTasks(Task[] tasks, int numberOfTasks) {
+    private static void printTasks(ArrayList<Task> tasks) {
         System.out.println("Here are the tasks in your list:");
-        for (int index = 0; index < numberOfTasks; index++) {
-            System.out.println((index + 1) + "." + tasks[index]);
+        for (int index = 0; index < tasks.size(); index++) {
+            System.out.println((index + 1) + "." + tasks.get(index));
         }
     }
 
     /**
      * Stores a task and displays the confirmation message.
      *
-     * @param tasks the array containing stored tasks
-     * @param numberOfTasks the index at which to store the task
+     * @param tasks the list in which to store the task
      * @param task the task to store
-     * @throws TonyException if the task list has reached its capacity
      */
-    private static void addTask(Task[] tasks, int numberOfTasks, Task task) throws TonyException {
-        if (numberOfTasks >= MAX_TASKS) {
-            throw new TonyException("Your task list is full. Remove a task before adding another one.");
-        }
-        tasks[numberOfTasks] = task;
+    private static void addTask(List<Task> tasks, Task task) {
+        tasks.add(task);
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + task);
-        System.out.println("Now you have " + (numberOfTasks + 1) + " tasks in the list.");
+        System.out.println("Now you have " + formatTaskCount(tasks.size()) + " in the list.");
     }
 
     /**
@@ -102,30 +93,53 @@ public class Tony {
      * Invalid task numbers leave the stored tasks unchanged.
      *
      * @param command the entered command, beginning with {@code mark }
-     * @param tasks the array containing stored tasks
-     * @param numberOfTasks how many positions in {@code tasks} contain tasks
+     * @param tasks the tasks currently stored in the list
      * @throws TonyException if the task number is missing, invalid, or out of range
      */
-    private static void markTask(String command, Task[] tasks, int numberOfTasks) throws TonyException {
-        int taskIndex = getTaskIndex(command, "mark", numberOfTasks);
-        tasks[taskIndex].markAsDone();
+    private static void markTask(String command, List<Task> tasks) throws TonyException {
+        int taskIndex = getTaskIndex(command, "mark", tasks.size());
+        tasks.get(taskIndex).markAsDone();
         System.out.println("Nice! I've marked this task as done:");
-        System.out.println("  " + tasks[taskIndex]);
+        System.out.println("  " + tasks.get(taskIndex));
     }
 
     /**
      * Marks the one-based task number in an {@code unmark} command as incomplete.
      *
      * @param command the entered command, beginning with {@code unmark}
-     * @param tasks the array containing stored tasks
-     * @param numberOfTasks how many positions in {@code tasks} contain tasks
+     * @param tasks the tasks currently stored in the list
      * @throws TonyException if the task number is missing, invalid, or out of range
      */
-    private static void unmarkTask(String command, Task[] tasks, int numberOfTasks) throws TonyException {
-        int taskIndex = getTaskIndex(command, "unmark", numberOfTasks);
-        tasks[taskIndex].markAsUndone();
+    private static void unmarkTask(String command, List<Task> tasks) throws TonyException {
+        int taskIndex = getTaskIndex(command, "unmark", tasks.size());
+        tasks.get(taskIndex).markAsUndone();
         System.out.println("OK, I've marked this task as not done yet:");
-        System.out.println("  " + tasks[taskIndex]);
+        System.out.println("  " + tasks.get(taskIndex));
+    }
+
+    /**
+     * Removes the one-based task number supplied in a {@code delete} command.
+     *
+     * @param command the entered command, beginning with {@code delete}
+     * @param tasks the tasks currently stored in the list
+     * @throws TonyException if the task number is missing, invalid, or out of range
+     */
+    private static void deleteTask(String command, List<Task> tasks) throws TonyException {
+        int taskIndex = getTaskIndex(command, "delete", tasks.size());
+        Task removedTask = tasks.remove(taskIndex);
+        System.out.println("Noted. I've removed this task:");
+        System.out.println("  " + removedTask);
+        System.out.println("Now you have " + formatTaskCount(tasks.size()) + " in the list.");
+    }
+
+    /**
+     * Formats a task count with the appropriate singular or plural noun.
+     *
+     * @param taskCount the number of tasks in the list
+     * @return the count followed by {@code task} or {@code tasks}
+     */
+    private static String formatTaskCount(int taskCount) {
+        return taskCount + (taskCount == 1 ? " task" : " tasks");
     }
 
     /**
