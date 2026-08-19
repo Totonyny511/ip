@@ -4,9 +4,12 @@ import java.util.Scanner;
  * Starts the Tony chatbot application.
  */
 public class Tony {
+    /** Maximum number of tasks that can be kept while the program is running. */
+    private static final int MAX_TASKS = 100;
+
     /**
-     * Displays Tony's greeting, echoes each entered command, and exits when the
-     * user enters {@code bye}.
+     * Displays Tony's greeting, stores entered tasks, lists them on request,
+     * and exits when the user enters {@code bye}.
      *
      * @param args command-line arguments (not used by this application)
      */
@@ -24,6 +27,9 @@ public class Tony {
         System.out.println(line);
 
         Scanner scanner = new Scanner(System.in);
+        String[] tasks = new String[MAX_TASKS];
+        int numberOfTasks = 0;
+
         while (scanner.hasNextLine()) {
             String command = scanner.nextLine();
             System.out.println(line);
@@ -34,8 +40,26 @@ public class Tony {
                 break;
             }
 
-            System.out.println(command);
+            if (command.equals("list")) {
+                printTasks(tasks, numberOfTasks);
+            } else {
+                tasks[numberOfTasks] = command;
+                numberOfTasks++;
+                System.out.println("added: " + command);
+            }
             System.out.println(line);
+        }
+    }
+
+    /**
+     * Prints each task that has been stored, with numbering that starts at one.
+     *
+     * @param tasks the array containing stored tasks
+     * @param numberOfTasks how many positions in {@code tasks} contain tasks
+     */
+    private static void printTasks(String[] tasks, int numberOfTasks) {
+        for (int index = 0; index < numberOfTasks; index++) {
+            System.out.println((index + 1) + ". " + tasks[index]);
         }
     }
 }
