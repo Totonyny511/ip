@@ -27,7 +27,7 @@ public class Tony {
         System.out.println(line);
 
         Scanner scanner = new Scanner(System.in);
-        String[] tasks = new String[MAX_TASKS];
+        Task[] tasks = new Task[MAX_TASKS];
         int numberOfTasks = 0;
 
         while (scanner.hasNextLine()) {
@@ -42,8 +42,12 @@ public class Tony {
 
             if (command.equals("list")) {
                 printTasks(tasks, numberOfTasks);
+            } else if (command.startsWith("mark ")) {
+                markTask(command, tasks, numberOfTasks);
+            } else if (command.startsWith("unmark ")) {
+                unmarkTask(command, tasks, numberOfTasks);
             } else {
-                tasks[numberOfTasks] = command;
+                tasks[numberOfTasks] = new Task(command);
                 numberOfTasks++;
                 System.out.println("added: " + command);
             }
@@ -52,14 +56,67 @@ public class Tony {
     }
 
     /**
-     * Prints each task that has been stored, with numbering that starts at one.
+     * Prints each stored task with its completion status and one-based number.
      *
      * @param tasks the array containing stored tasks
      * @param numberOfTasks how many positions in {@code tasks} contain tasks
      */
-    private static void printTasks(String[] tasks, int numberOfTasks) {
+    private static void printTasks(Task[] tasks, int numberOfTasks) {
+        System.out.println("Here are the tasks in your list:");
         for (int index = 0; index < numberOfTasks; index++) {
-            System.out.println((index + 1) + ". " + tasks[index]);
+            System.out.println((index + 1) + "." + tasks[index]);
+        }
+    }
+
+    /**
+     * Marks the one-based task number in a {@code mark} command as complete.
+     * Invalid task numbers leave the stored tasks unchanged.
+     *
+     * @param command the entered command, beginning with {@code mark }
+     * @param tasks the array containing stored tasks
+     * @param numberOfTasks how many positions in {@code tasks} contain tasks
+     */
+    private static void markTask(String command, Task[] tasks, int numberOfTasks) {
+        try {
+            int taskNumber = Integer.parseInt(command.substring("mark ".length()).trim());
+            int taskIndex = taskNumber - 1;
+
+            if (taskIndex < 0 || taskIndex >= numberOfTasks) {
+                System.out.println("That task number is not in your list.");
+                return;
+            }
+
+            tasks[taskIndex].markAsDone();
+            System.out.println("Nice! I've marked this task as done:");
+            System.out.println("  " + tasks[taskIndex]);
+        } catch (NumberFormatException exception) {
+            System.out.println("Please provide a task number to mark.");
+        }
+    }
+
+    /**
+     * Marks the one-based task number in an {@code unmark} command as incomplete.
+     * Invalid task numbers leave the stored tasks unchanged.
+     *
+     * @param command the entered command, beginning with {@code unmark }
+     * @param tasks the array containing stored tasks
+     * @param numberOfTasks how many positions in {@code tasks} contain tasks
+     */
+    private static void unmarkTask(String command, Task[] tasks, int numberOfTasks) {
+        try {
+            int taskNumber = Integer.parseInt(command.substring("unmark ".length()).trim());
+            int taskIndex = taskNumber - 1;
+
+            if (taskIndex < 0 || taskIndex >= numberOfTasks) {
+                System.out.println("That task number is not in your list.");
+                return;
+            }
+
+            tasks[taskIndex].markAsUndone();
+            System.out.println("OK, I've marked this task as not done yet:");
+            System.out.println("  " + tasks[taskIndex]);
+        } catch (NumberFormatException exception) {
+            System.out.println("Please provide a task number to unmark.");
         }
     }
 }
