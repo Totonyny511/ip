@@ -46,10 +46,20 @@ public class Tony {
                 markTask(command, tasks, numberOfTasks);
             } else if (command.startsWith("unmark ")) {
                 unmarkTask(command, tasks, numberOfTasks);
-            } else {
-                tasks[numberOfTasks] = new Task(command);
+            } else if (command.startsWith("todo ")) {
+                addTask(tasks, numberOfTasks, new Todo(command.substring(5)));
                 numberOfTasks++;
-                System.out.println("added: " + command);
+            } else if (command.startsWith("deadline ")) {
+                String[] parts = command.substring(9).split(" /by ", 2);
+                addTask(tasks, numberOfTasks, new Deadline(parts[0], parts[1]));
+                numberOfTasks++;
+            } else if (command.startsWith("event ")) {
+                String[] parts = command.substring(6).split(" /from | /to ", 3);
+                addTask(tasks, numberOfTasks, new Event(parts[0], parts[1], parts[2]));
+                numberOfTasks++;
+            } else {
+                addTask(tasks, numberOfTasks, new Todo(command));
+                numberOfTasks++;
             }
             System.out.println(line);
         }
@@ -66,6 +76,20 @@ public class Tony {
         for (int index = 0; index < numberOfTasks; index++) {
             System.out.println((index + 1) + "." + tasks[index]);
         }
+    }
+
+    /**
+     * Stores a task and displays the confirmation message.
+     *
+     * @param tasks the array containing stored tasks
+     * @param numberOfTasks the index at which to store the task
+     * @param task the task to store
+     */
+    private static void addTask(Task[] tasks, int numberOfTasks, Task task) {
+        tasks[numberOfTasks] = task;
+        System.out.println("Got it. I've added this task:");
+        System.out.println("  " + task);
+        System.out.println("Now you have " + (numberOfTasks + 1) + " tasks in the list.");
     }
 
     /**
