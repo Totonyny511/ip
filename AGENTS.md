@@ -1,4 +1,4 @@
-# Project context
+A# Project context
 
 This repository is a starter template for a greenfield Java project used in an introductory software engineering course in an undergraduate computer science program. Students use it as the starting point for their own projects.
 
@@ -27,6 +27,14 @@ Unless the user says otherwise, assume that you are assisting a student working 
 ## Java version:
 
 Ensure that Java 25 is used when running the application or build tasks. On macOS, use `sdk use java 25.0.3.fx-zulu` to switch to Java 25 if needed.
+
+## Console UI testing
+
+After every code update, review `test/ui-test-plan.md` and update it when the
+change affects an existing console interaction or introduces a new one. Then
+invoke the `test-ui` skill to run the recorded UI test cases. Include the
+test-session outcome in the handoff; if a case fails, report its expected and
+actual outputs and stop the UI test session as required by the skill.
 
 ## Git
 

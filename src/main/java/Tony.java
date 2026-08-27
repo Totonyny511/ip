@@ -1,3 +1,5 @@
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -6,6 +8,9 @@ import java.util.Scanner;
  * Starts the Tony chatbot application.
  */
 public class Tony {
+    /** Default location of the task data file. */
+    private static final Path DEFAULT_DATA_FILE = Path.of("./data/tony.txt");
+
     /**
      * Displays Tony's greeting, stores entered tasks, lists them on request,
      * and exits when the user enters {@code bye}.
@@ -26,7 +31,8 @@ public class Tony {
         System.out.println(line);
 
         Scanner scanner = new Scanner(System.in);
-        ArrayList<Task> tasks = new ArrayList<>();
+        Storage storage = new Storage(DEFAULT_DATA_FILE);
+        ArrayList<Task> tasks = loadTasks(storage);
 
         while (scanner.hasNextLine()) {
             String command = scanner.nextLine();
@@ -43,16 +49,22 @@ public class Tony {
                     printTasks(tasks);
                 } else if (isCommand(command, "mark")) {
                     markTask(command, tasks);
+                    saveTasks(storage, tasks);
                 } else if (isCommand(command, "unmark")) {
                     unmarkTask(command, tasks);
+                    saveTasks(storage, tasks);
                 } else if (isCommand(command, "delete")) {
                     deleteTask(command, tasks);
+                    saveTasks(storage, tasks);
                 } else if (isCommand(command, "todo")) {
                     addTask(tasks, createTodo(command));
+                    saveTasks(storage, tasks);
                 } else if (isCommand(command, "deadline")) {
                     addTask(tasks, createDeadline(command));
+                    saveTasks(storage, tasks);
                 } else if (isCommand(command, "event")) {
                     addTask(tasks, createEvent(command));
+                    saveTasks(storage, tasks);
                 } else {
                     throw new TonyException("I don't recognize that command. Try todo, deadline, event, list, mark, unmark, delete, or bye.");
                 }
@@ -61,6 +73,50 @@ public class Tony {
             }
             System.out.println(line);
         }
+    }
+
+    /**
+     * Loads saved tasks while allowing the chatbot to start if the file cannot be read.
+     *
+     * @param storage the task storage to read
+     * @return the valid tasks loaded from disk, or an empty list after a read error
+     */
+    private static ArrayList<Task> loadTasks(Storage storage) {
+        try {
+            Storage.LoadResult result = storage.load();
+            if (result.getSkippedLineCount() > 0) {
+                System.out.println("Warning: I skipped " + formatLineCount(result.getSkippedLineCount())
+                        + " in the data file because they were invalid.");
+            }
+            return result.getTasks();
+        } catch (IOException exception) {
+            System.out.println("Warning: I couldn't read the data file. Starting with an empty task list.");
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Saves tasks while keeping the current session usable after a disk error.
+     *
+     * @param storage the task storage to write
+     * @param tasks the current tasks
+     */
+    private static void saveTasks(Storage storage, List<Task> tasks) {
+        try {
+            storage.save(tasks);
+        } catch (IOException exception) {
+            System.out.println("Warning: I couldn't save your tasks. Your latest changes are only in this session.");
+        }
+    }
+
+    /**
+     * Formats the number of invalid data-file lines for a warning message.
+     *
+     * @param lineCount number of invalid lines
+     * @return the count with a singular or plural noun
+     */
+    private static String formatLineCount(int lineCount) {
+        return lineCount + (lineCount == 1 ? " line" : " lines");
     }
 
     /**
