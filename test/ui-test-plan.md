@@ -2,15 +2,15 @@
 
 ## Test case: Add and list all task types
 
-**Aim:** Verifies that to-dos, deadlines, and events are stored and displayed with their type, status, and date/time text.
+**Aim:** Verifies that to-dos, deadlines, and events are stored and displayed with their type, status, and formatted dates.
 
 **Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony'`
 
 **Inputs:**
 ```text
 todo borrow book
-deadline return book /by Sunday
-event project meeting /from Mon 2pm /to 4pm
+deadline return book /by 2019-10-15
+event project meeting /from 2019-10-16 /to 2019-10-17
 mark 1
 list
 bye
@@ -33,12 +33,12 @@ Now you have 1 task in the list.
 ________________________________________________
 ________________________________________________
 Got it. I've added this task:
-  [D][ ] return book (by: Sunday)
+  [D][ ] return book (by: Oct 15 2019)
 Now you have 2 tasks in the list.
 ________________________________________________
 ________________________________________________
 Got it. I've added this task:
-  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+  [E][ ] project meeting (from: Oct 16 2019 to: Oct 17 2019)
 Now you have 3 tasks in the list.
 ________________________________________________
 ________________________________________________
@@ -48,8 +48,8 @@ ________________________________________________
 ________________________________________________
 Here are the tasks in your list:
 1.[T][X] borrow book
-2.[D][ ] return book (by: Sunday)
-3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+2.[D][ ] return book (by: Oct 15 2019)
+3.[E][ ] project meeting (from: Oct 16 2019 to: Oct 17 2019)
 ________________________________________________
 ________________________________________________
 Bye. Hope to see you again soon!
@@ -68,9 +68,9 @@ todo
 todo write report
 deadline
 list
-deadline submit form /by Friday
+deadline submit form /by 2019-10-18
 event meeting /from 2pm
-event standup /from 9am /to 10am
+event standup /from 2019-10-19 /to 2019-10-20
 blah
 list
 bye
@@ -95,7 +95,7 @@ Got it. I've added this task:
 Now you have 1 task in the list.
 ________________________________________________
 ________________________________________________
-Oops: A deadline needs a description and a due time. Use: deadline <task> /by <time>
+Oops: A deadline needs a description and a due date. Use: deadline <task> /by <yyyy-MM-dd>
 ________________________________________________
 ________________________________________________
 Here are the tasks in your list:
@@ -103,15 +103,15 @@ Here are the tasks in your list:
 ________________________________________________
 ________________________________________________
 Got it. I've added this task:
-  [D][ ] submit form (by: Friday)
+  [D][ ] submit form (by: Oct 18 2019)
 Now you have 2 tasks in the list.
 ________________________________________________
 ________________________________________________
-Oops: An event needs a description, start, and end. Use: event <task> /from <start> /to <end>
+Oops: An event needs a description, start date, and end date. Use: event <task> /from <yyyy-MM-dd> /to <yyyy-MM-dd>
 ________________________________________________
 ________________________________________________
 Got it. I've added this task:
-  [E][ ] standup (from: 9am to: 10am)
+  [E][ ] standup (from: Oct 19 2019 to: Oct 20 2019)
 Now you have 3 tasks in the list.
 ________________________________________________
 ________________________________________________
@@ -120,8 +120,8 @@ ________________________________________________
 ________________________________________________
 Here are the tasks in your list:
 1.[T][ ] write report
-2.[D][ ] submit form (by: Friday)
-3.[E][ ] standup (from: 9am to: 10am)
+2.[D][ ] submit form (by: Oct 18 2019)
+3.[E][ ] standup (from: Oct 19 2019 to: Oct 20 2019)
 ________________________________________________
 ________________________________________________
 Bye. Hope to see you again soon!
@@ -137,8 +137,8 @@ ________________________________________________
 **Inputs:**
 ```text
 todo read book
-deadline return book /by June 6th
-event project meeting /from Aug 6th 2pm /to 4pm
+deadline return book /by 2019-06-06
+event project meeting /from 2019-08-06 /to 2019-08-07
 todo borrow book
 delete 3
 list
@@ -164,12 +164,12 @@ Now you have 1 task in the list.
 ________________________________________________
 ________________________________________________
 Got it. I've added this task:
-  [D][ ] return book (by: June 6th)
+  [D][ ] return book (by: Jun 06 2019)
 Now you have 2 tasks in the list.
 ________________________________________________
 ________________________________________________
 Got it. I've added this task:
-  [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+  [E][ ] project meeting (from: Aug 06 2019 to: Aug 07 2019)
 Now you have 3 tasks in the list.
 ________________________________________________
 ________________________________________________
@@ -179,13 +179,13 @@ Now you have 4 tasks in the list.
 ________________________________________________
 ________________________________________________
 Noted. I've removed this task:
-  [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+  [E][ ] project meeting (from: Aug 06 2019 to: Aug 07 2019)
 Now you have 3 tasks in the list.
 ________________________________________________
 ________________________________________________
 Here are the tasks in your list:
 1.[T][ ] read book
-2.[D][ ] return book (by: June 6th)
+2.[D][ ] return book (by: Jun 06 2019)
 3.[T][ ] borrow book
 ________________________________________________
 ________________________________________________
@@ -275,7 +275,7 @@ ________________________________________________
 **Inputs:**
 ```text
 todo read book
-deadline return book /by June 6th
+deadline return book /by 2019-06-06
 mark 1
 delete 1
 list
@@ -301,7 +301,7 @@ Now you have 1 task in the list.
 ________________________________________________
 ________________________________________________
 Got it. I've added this task:
-  [D][ ] return book (by: June 6th)
+  [D][ ] return book (by: Jun 06 2019)
 Now you have 2 tasks in the list.
 ________________________________________________
 ________________________________________________
@@ -315,11 +315,11 @@ Now you have 1 task in the list.
 ________________________________________________
 ________________________________________________
 Here are the tasks in your list:
-1.[D][ ] return book (by: June 6th)
+1.[D][ ] return book (by: Jun 06 2019)
 ________________________________________________
 ________________________________________________
 Noted. I've removed this task:
-  [D][ ] return book (by: June 6th)
+  [D][ ] return book (by: Jun 06 2019)
 Now you have 0 tasks in the list.
 ________________________________________________
 ________________________________________________
@@ -482,8 +482,8 @@ ________________________________________________
 **Inputs:**
 ```text
 todo read book
-deadline return book /by June 6th
-event project meeting /from Aug 6th 2pm /to 4pm
+deadline return book /by 2019-06-06
+event project meeting /from 2019-08-06 /to 2019-08-07
 mark 1
 unmark 1
 delete 2
@@ -507,12 +507,12 @@ Now you have 1 task in the list.
 ________________________________________________
 ________________________________________________
 Got it. I've added this task:
-  [D][ ] return book (by: June 6th)
+  [D][ ] return book (by: Jun 06 2019)
 Now you have 2 tasks in the list.
 ________________________________________________
 ________________________________________________
 Got it. I've added this task:
-  [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+  [E][ ] project meeting (from: Aug 06 2019 to: Aug 07 2019)
 Now you have 3 tasks in the list.
 ________________________________________________
 ________________________________________________
@@ -525,7 +525,7 @@ OK, I've marked this task as not done yet:
 ________________________________________________
 ________________________________________________
 Noted. I've removed this task:
-  [D][ ] return book (by: June 6th)
+  [D][ ] return book (by: Jun 06 2019)
 Now you have 2 tasks in the list.
 ________________________________________________
 ________________________________________________
@@ -533,14 +533,14 @@ Bye. Hope to see you again soon!
 ________________________________________________
 Saved file:
 T | 0 | read book
-E | 0 | project meeting | Aug 6th 2pm | 4pm
+E | 0 | project meeting | 2019-08-06 | 2019-08-07
 ```
 
 ## Test case: Load saved tasks when the chatbot starts
 
-**Aim:** Verifies that a saved to-do, deadline, and event are reconstructed with their descriptions, date/time fields, and completion states on startup.
+**Aim:** Verifies that a saved to-do, deadline, and event are reconstructed with their descriptions, date fields, and completion states on startup.
 
-**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && printf "T | 1 | read book\\nD | 0 | return book | June 6th\\nE | 1 | project meeting | Aug 6th 2pm | 4pm\\n" > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony'`
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && printf "T | 1 | read book\\nD | 0 | return book | 2019-06-06\\nE | 1 | project meeting | 2019-08-06 | 2019-08-07\\n" > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony'`
 
 **Inputs:**
 ```text
@@ -561,8 +561,8 @@ ________________________________________________
 ________________________________________________
 Here are the tasks in your list:
 1.[T][X] read book
-2.[D][ ] return book (by: June 6th)
-3.[E][X] project meeting (from: Aug 6th 2pm to: 4pm)
+2.[D][ ] return book (by: Jun 06 2019)
+3.[E][X] project meeting (from: Aug 06 2019 to: Aug 07 2019)
 ________________________________________________
 ________________________________________________
 Bye. Hope to see you again soon!
@@ -603,7 +603,7 @@ ________________________________________________
 
 **Aim:** Verifies that blank lines are ignored, malformed records are skipped with one warning, and valid records still load.
 
-**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && printf "%s\\n" "T | 1 | valid task" "" "T | 2 | bad status" "X | 0 | unknown type" "D | 0 | missing due time" "E | 0 | too many | start | end | extra" "T | 0 | " "D | 0 | return book | Friday" > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony'`
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && printf "%s\\n" "T | 1 | valid task" "" "T | 2 | bad status" "X | 0 | unknown type" "D | 0 | missing due date" "E | 0 | too many | start | end | extra" "T | 0 | " "D | 0 | impossible date | 2019-02-30" "E | 0 | backwards | 2019-10-20 | 2019-10-19" "D | 0 | return book | 2019-10-18" > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony'`
 
 **Inputs:**
 ```text
@@ -621,11 +621,71 @@ bye
 ________________________________________________
 What can I do for you?
 ________________________________________________
-Warning: I skipped 5 lines in the data file because they were invalid.
+Warning: I skipped 7 lines in the data file because they were invalid.
 ________________________________________________
 Here are the tasks in your list:
 1.[T][X] valid task
-2.[D][ ] return book (by: Friday)
+2.[D][ ] return book (by: Oct 18 2019)
+________________________________________________
+________________________________________________
+Bye. Hope to see you again soon!
+________________________________________________
+```
+
+## Test case: Parse valid dates and reject invalid dates
+
+**Aim:** Verifies strict `yyyy-MM-dd` parsing, leap-day support, formatted date display, and rejection of event ranges whose end precedes their start.
+
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony'`
+
+**Inputs:**
+```text
+deadline invalid leap day /by 2019-02-29
+deadline wrong format /by 15-10-2019
+event impossible date /from 2019-02-28 /to 2019-02-30
+event backwards /from 2019-10-20 /to 2019-10-19
+deadline valid leap day /by 2020-02-29
+event one-day workshop /from 2019-10-15 /to 2019-10-15
+list
+bye
+```
+
+**Expected output:**
+```text
+ _____   ___   _   _ __   __
+|_   _| / _ \ | \ | |\ \ / /
+  | |  | | | ||  \| | \ V /
+  | |  | |_| || |\  |  | |
+  |_|   \___/ |_| \_|  |_|
+________________________________________________
+What can I do for you?
+________________________________________________
+________________________________________________
+Oops: Please enter dates as yyyy-MM-dd (for example, 2019-10-15).
+________________________________________________
+________________________________________________
+Oops: Please enter dates as yyyy-MM-dd (for example, 2019-10-15).
+________________________________________________
+________________________________________________
+Oops: Please enter dates as yyyy-MM-dd (for example, 2019-10-15).
+________________________________________________
+________________________________________________
+Oops: An event's end date cannot be before its start date.
+________________________________________________
+________________________________________________
+Got it. I've added this task:
+  [D][ ] valid leap day (by: Feb 29 2020)
+Now you have 1 task in the list.
+________________________________________________
+________________________________________________
+Got it. I've added this task:
+  [E][ ] one-day workshop (from: Oct 15 2019 to: Oct 15 2019)
+Now you have 2 tasks in the list.
+________________________________________________
+________________________________________________
+Here are the tasks in your list:
+1.[D][ ] valid leap day (by: Feb 29 2020)
+2.[E][ ] one-day workshop (from: Oct 15 2019 to: Oct 15 2019)
 ________________________________________________
 ________________________________________________
 Bye. Hope to see you again soon!
@@ -680,7 +740,7 @@ ________________________________________________
 **Inputs:**
 ```text
 todo compare A | B
-deadline review C:\notes /by Fri | Sat
+deadline review C:\notes | archive /by 2019-10-18
 bye
 ```
 
@@ -701,7 +761,7 @@ Now you have 1 task in the list.
 ________________________________________________
 ________________________________________________
 Got it. I've added this task:
-  [D][ ] review C:\notes (by: Fri | Sat)
+  [D][ ] review C:\notes | archive (by: Oct 18 2019)
 Now you have 2 tasks in the list.
 ________________________________________________
 ________________________________________________
@@ -709,14 +769,14 @@ Bye. Hope to see you again soon!
 ________________________________________________
 Saved file:
 T | 0 | compare A \| B
-D | 0 | review C:\\notes | Fri \| Sat
+D | 0 | review C:\\notes \| archive | 2019-10-18
 ```
 
 ## Test case: Load escaped storage fields
 
 **Aim:** Verifies that escaped pipe and backslash characters are decoded when saved tasks are loaded.
 
-**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && printf "%s\\n" "T | 1 | compare A \\| B" "D | 0 | review C:\\\\notes | Fri \\| Sat" > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony'`
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && printf "%s\\n" "T | 1 | compare A \\| B" "D | 0 | review C:\\\\notes \\| archive | 2019-10-18" > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony'`
 
 **Inputs:**
 ```text
@@ -737,7 +797,7 @@ ________________________________________________
 ________________________________________________
 Here are the tasks in your list:
 1.[T][X] compare A | B
-2.[D][ ] review C:\notes (by: Fri | Sat)
+2.[D][ ] review C:\notes | archive (by: Oct 18 2019)
 ________________________________________________
 ________________________________________________
 Bye. Hope to see you again soon!
