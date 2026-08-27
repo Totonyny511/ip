@@ -3,6 +3,8 @@ import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,9 +112,9 @@ public class Storage {
 
         Task task = switch (taskType) {
         case "T" -> new Todo(getRequiredField(fields, 2));
-        case "D" -> new Deadline(getRequiredField(fields, 2), getRequiredField(fields, 3));
-        case "E" -> new Event(getRequiredField(fields, 2), getRequiredField(fields, 3),
-                getRequiredField(fields, 4));
+        case "D" -> new Deadline(getRequiredField(fields, 2), parseStoredDate(getRequiredField(fields, 3)));
+        case "E" -> new Event(getRequiredField(fields, 2), parseStoredDate(getRequiredField(fields, 3)),
+                parseStoredDate(getRequiredField(fields, 4)));
         default -> throw new IllegalStateException("Task type was already validated");
         };
 
@@ -120,6 +122,21 @@ public class Storage {
             task.markAsDone();
         }
         return task;
+    }
+
+    /**
+     * Parses a date stored in the ISO {@code yyyy-MM-dd} format.
+     *
+     * @param dateText the stored date text
+     * @return the parsed date
+     * @throws IllegalArgumentException if the date is malformed or impossible
+     */
+    private LocalDate parseStoredDate(String dateText) {
+        try {
+            return LocalDate.parse(dateText);
+        } catch (DateTimeParseException exception) {
+            throw new IllegalArgumentException("Invalid stored date: " + dateText, exception);
+        }
     }
 
     /**

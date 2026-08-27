@@ -1,5 +1,8 @@
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -10,6 +13,9 @@ import java.util.Scanner;
 public class Tony {
     /** Default location of the task data file. */
     private static final Path DEFAULT_DATA_FILE = Path.of("./data/tony.txt");
+
+    /** Required format for dates entered in commands. */
+    private static final DateTimeFormatter INPUT_DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE;
 
     /**
      * Displays Tony's greeting, stores entered tasks, lists them on request,
@@ -235,10 +241,11 @@ public class Tony {
         String details = command.substring("deadline".length()).trim();
         int byMarker = details.indexOf(" /by ");
         if (byMarker <= 0 || byMarker + " /by ".length() >= details.length()) {
-            throw new TonyException("A deadline needs a description and a due time. Use: deadline <task> /by <time>");
+            throw new TonyException("A deadline needs a description and a due date. "
+                    + "Use: deadline <task> /by <yyyy-MM-dd>");
         }
-        return new Deadline(details.substring(0, byMarker).trim(),
-                details.substring(byMarker + " /by ".length()).trim());
+        LocalDate dueDate = parseDate(details.substring(byMarker + " /by ".length()).trim());
+        return new Deadline(details.substring(0, byMarker).trim(), dueDate);
     }
 
     /**
@@ -254,11 +261,30 @@ public class Tony {
         int toMarker = fromMarker < 0 ? -1 : details.indexOf(" /to ", fromMarker + " /from ".length());
         if (fromMarker <= 0 || toMarker <= fromMarker + " /from ".length()
                 || toMarker + " /to ".length() >= details.length()) {
-            throw new TonyException("An event needs a description, start, and end. Use: event <task> /from <start> /to <end>");
+            throw new TonyException("An event needs a description, start date, and end date. "
+                    + "Use: event <task> /from <yyyy-MM-dd> /to <yyyy-MM-dd>");
         }
-        return new Event(details.substring(0, fromMarker).trim(),
-                details.substring(fromMarker + " /from ".length(), toMarker).trim(),
-                details.substring(toMarker + " /to ".length()).trim());
+        LocalDate startDate = parseDate(details.substring(fromMarker + " /from ".length(), toMarker).trim());
+        LocalDate endDate = parseDate(details.substring(toMarker + " /to ".length()).trim());
+        if (endDate.isBefore(startDate)) {
+            throw new TonyException("An event's end date cannot be before its start date.");
+        }
+        return new Event(details.substring(0, fromMarker).trim(), startDate, endDate);
+    }
+
+    /**
+     * Parses a date entered in the required ISO format.
+     *
+     * @param dateText the user-entered date
+     * @return the parsed date
+     * @throws TonyException if the text is not a valid {@code yyyy-MM-dd} date
+     */
+    private static LocalDate parseDate(String dateText) throws TonyException {
+        try {
+            return LocalDate.parse(dateText, INPUT_DATE_FORMAT);
+        } catch (DateTimeParseException exception) {
+            throw new TonyException("Please enter dates as yyyy-MM-dd (for example, 2019-10-15).");
+        }
     }
 
     /**

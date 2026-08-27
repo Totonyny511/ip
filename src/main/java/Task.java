@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+
 /**
  * Represents a task that can be completed or left incomplete.
  */
@@ -43,6 +45,17 @@ public abstract class Task {
      * @return the task's type
      */
     protected abstract TaskType getTaskType();
+
+    /**
+     * Returns whether this task falls on the specified date.
+     * Tasks without a date return {@code false}.
+     *
+     * @param date the date to check
+     * @return whether this task falls on the date
+     */
+    public boolean isOnDate(LocalDate date) {
+        return false;
+    }
 
     /**
      * Formats this task as one line for storage on disk.
