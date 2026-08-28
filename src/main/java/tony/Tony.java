@@ -50,6 +50,8 @@ public class Tony {
             try {
                 if (command.equals("list")) {
                     ui.showTasks(tasks);
+                } else if (isCommand(command, "find")) {
+                    ui.showMatchingTasks(findTasks(command, tasks));
                 } else if (isCommand(command, "mark")) {
                     ui.showTaskMarked(markTask(command, tasks));
                     saveTasks(storage, tasks, ui);
@@ -69,7 +71,8 @@ public class Tony {
                     addTask(tasks, createEvent(command), ui);
                     saveTasks(storage, tasks, ui);
                 } else {
-                    throw new TonyException("I don't recognize that command. Try todo, deadline, event, list, mark, unmark, delete, or bye.");
+                    throw new TonyException("I don't recognize that command. Try todo, deadline, event, list, "
+                            + "find, mark, unmark, delete, or bye.");
                 }
             } catch (TonyException exception) {
                 ui.showError(exception.getMessage());
@@ -163,6 +166,22 @@ public class Tony {
     private static Task deleteTask(String command, TaskList tasks) throws TonyException {
         int taskIndex = getTaskIndex(command, "delete", tasks.size());
         return tasks.delete(taskIndex);
+    }
+
+    /**
+     * Finds tasks whose descriptions contain the keyword in a {@code find} command.
+     *
+     * @param command the entered command, beginning with {@code find}
+     * @param tasks the tasks currently stored in the list
+     * @return matching tasks in their original list order
+     * @throws TonyException if the keyword is missing
+     */
+    private static TaskList findTasks(String command, TaskList tasks) throws TonyException {
+        String keyword = command.substring("find".length()).trim();
+        if (keyword.isEmpty()) {
+            throw new TonyException("Please provide a keyword to find.");
+        }
+        return tasks.find(keyword);
     }
 
     /**

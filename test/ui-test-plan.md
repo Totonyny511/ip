@@ -115,13 +115,86 @@ Got it. I've added this task:
 Now you have 3 tasks in the list.
 ________________________________________________
 ________________________________________________
-Oops: I don't recognize that command. Try todo, deadline, event, list, mark, unmark, delete, or bye.
+Oops: I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, or bye.
 ________________________________________________
 ________________________________________________
 Here are the tasks in your list:
 1.[T][ ] write report
 2.[D][ ] submit form (by: Oct 18 2019)
 3.[E][ ] standup (from: Oct 19 2019 to: Oct 20 2019)
+________________________________________________
+________________________________________________
+Bye. Hope to see you again soon!
+________________________________________________
+```
+
+## Test case: Find tasks by description keyword
+
+**Aim:** Verifies that `find` searches descriptions without regard to letter case, preserves match order and status, excludes non-matches, handles no results, and rejects a missing keyword.
+
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/*.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
+
+**Inputs:**
+```text
+todo Read Book
+deadline return book /by 2019-06-06
+todo write report
+mark 1
+mark 2
+find book
+find REPORT
+find calendar
+find
+bye
+```
+
+**Expected output:**
+```text
+ _____   ___   _   _ __   __
+|_   _| / _ \ | \ | |\ \ / /
+  | |  | | | ||  \| | \ V /
+  | |  | |_| || |\  |  | |
+  |_|   \___/ |_| \_|  |_|
+________________________________________________
+What can I do for you?
+________________________________________________
+________________________________________________
+Got it. I've added this task:
+  [T][ ] Read Book
+Now you have 1 task in the list.
+________________________________________________
+________________________________________________
+Got it. I've added this task:
+  [D][ ] return book (by: Jun 06 2019)
+Now you have 2 tasks in the list.
+________________________________________________
+________________________________________________
+Got it. I've added this task:
+  [T][ ] write report
+Now you have 3 tasks in the list.
+________________________________________________
+________________________________________________
+Nice! I've marked this task as done:
+  [T][X] Read Book
+________________________________________________
+________________________________________________
+Nice! I've marked this task as done:
+  [D][X] return book (by: Jun 06 2019)
+________________________________________________
+________________________________________________
+Here are the matching tasks in your list:
+1.[T][X] Read Book
+2.[D][X] return book (by: Jun 06 2019)
+________________________________________________
+________________________________________________
+Here are the matching tasks in your list:
+1.[T][ ] write report
+________________________________________________
+________________________________________________
+Here are the matching tasks in your list:
+________________________________________________
+________________________________________________
+Oops: Please provide a keyword to find.
 ________________________________________________
 ________________________________________________
 Bye. Hope to see you again soon!

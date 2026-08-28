@@ -76,6 +76,30 @@ public class TaskListTest {
     }
 
     @Test
+    public void find_keywordWithDifferentCase_returnsMatchingDescriptionsInOriginalOrder() {
+        Todo firstMatch = new Todo("Read Book");
+        Todo nonMatch = new Todo("write report");
+        Deadline secondMatch = new Deadline("return book", java.time.LocalDate.of(2019, 6, 6));
+        TaskList taskList = new TaskList(List.of(firstMatch, nonMatch, secondMatch));
+
+        TaskList matches = taskList.find("BOOK");
+
+        assertEquals(2, matches.size());
+        assertSame(firstMatch, matches.get(0));
+        assertSame(secondMatch, matches.get(1));
+    }
+
+    @Test
+    public void find_keywordOnlyInFormattedDate_returnsNoMatches() {
+        Deadline task = new Deadline("return library item", java.time.LocalDate.of(2019, 6, 6));
+        TaskList taskList = new TaskList(List.of(task));
+
+        TaskList matches = taskList.find("Jun");
+
+        assertEquals(0, matches.size());
+    }
+
+    @Test
     public void getTasks_returnedListCannotBeModified() {
         TaskList taskList = new TaskList(List.of(new Todo("task")));
         List<Task> tasks = taskList.getTasks();
