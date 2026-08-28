@@ -28,6 +28,16 @@ Unless the user says otherwise, assume that you are assisting a student working 
 
 Ensure that Java 25 is used when running the application or build tasks. On macOS, use `sdk use java 25.0.3.fx-zulu` to switch to Java 25 if needed.
 
+## JUnit testing
+
+Maintain JUnit tests for approximately the top 50% highest-value methods in the
+codebase. Prioritize complex methods, core behavior, and critical business logic
+over trivial getters, simple wrappers, or implementation details.
+
+After every code change, review and update the JUnit tests as needed to continue
+meeting this 50% coverage target. Run the JUnit suite through Gradle using Java
+25, and include the test outcome in the handoff.
+
 ## Console UI testing
 
 After every code update, review `test/ui-test-plan.md` and update it when the
