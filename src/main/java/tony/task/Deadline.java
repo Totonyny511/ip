@@ -13,20 +13,20 @@ public class Deadline extends Task {
             DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
 
     /** The date by which this task must be completed. */
-    private final LocalDate by;
+    private final LocalDate dueDate;
 
     /**
      * Creates an incomplete deadline task.
      *
-     * @param description the text describing the task
-     * @param by the deadline date
+     * @param description the text describing the task.
+     * @param dueDate the deadline date.
      */
-    public Deadline(String description, LocalDate by) {
+    public Deadline(String description, LocalDate dueDate) {
         super(description);
-        if (by == null) {
+        if (dueDate == null) {
             throw new IllegalArgumentException("A deadline date cannot be null");
         }
-        this.by = by;
+        this.dueDate = dueDate;
     }
 
     @Override
@@ -36,16 +36,16 @@ public class Deadline extends Task {
 
     @Override
     public boolean isOnDate(LocalDate date) {
-        return by.equals(date);
+        return dueDate.equals(date);
     }
 
     @Override
     public String toDataString() {
-        return super.toDataString() + " | " + by;
+        return super.toDataString() + " | " + dueDate;
     }
 
     @Override
     public String toString() {
-        return super.toString() + " (by: " + by.format(DISPLAY_DATE_FORMAT) + ")";
+        return super.toString() + " (by: " + dueDate.format(DISPLAY_DATE_FORMAT) + ")";
     }
 }

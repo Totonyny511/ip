@@ -43,7 +43,7 @@ public class Ui {
     /**
      * Returns whether another complete command can be read.
      *
-     * @return whether standard input contains another line
+     * @return whether standard input contains another line.
      */
     public boolean hasNextCommand() {
         return scanner.hasNextLine();
@@ -52,7 +52,7 @@ public class Ui {
     /**
      * Reads the next command entered by the user.
      *
-     * @return the complete command line
+     * @return the complete command line.
      */
     public String readCommand() {
         return scanner.nextLine();
@@ -66,7 +66,7 @@ public class Ui {
     /**
      * Displays all tasks with one-based list numbers.
      *
-     * @param tasks tasks to display
+     * @param tasks tasks to display.
      */
     public void showTasks(TaskList tasks) {
         System.out.println("Here are the tasks in your list:");
@@ -78,8 +78,8 @@ public class Ui {
     /**
      * Displays confirmation that a task was added.
      *
-     * @param task the added task
-     * @param taskCount the updated number of tasks
+     * @param task the added task.
+     * @param taskCount the updated number of tasks.
      */
     public void showTaskAdded(Task task, int taskCount) {
         System.out.println("Got it. I've added this task:");
@@ -90,7 +90,7 @@ public class Ui {
     /**
      * Displays confirmation that a task was marked complete.
      *
-     * @param task the marked task
+     * @param task the marked task.
      */
     public void showTaskMarked(Task task) {
         System.out.println("Nice! I've marked this task as done:");
@@ -100,7 +100,7 @@ public class Ui {
     /**
      * Displays confirmation that a task was marked incomplete.
      *
-     * @param task the unmarked task
+     * @param task the unmarked task.
      */
     public void showTaskUnmarked(Task task) {
         System.out.println("OK, I've marked this task as not done yet:");
@@ -110,8 +110,8 @@ public class Ui {
     /**
      * Displays confirmation that a task was deleted.
      *
-     * @param task the deleted task
-     * @param taskCount the updated number of tasks
+     * @param task the deleted task.
+     * @param taskCount the updated number of tasks.
      */
     public void showTaskDeleted(Task task, int taskCount) {
         System.out.println("Noted. I've removed this task:");
@@ -122,7 +122,7 @@ public class Ui {
     /**
      * Displays an error caused by invalid user input.
      *
-     * @param message explanation of the error
+     * @param message explanation of the error.
      */
     public void showError(String message) {
         System.out.println("Oops: " + message);
@@ -131,7 +131,7 @@ public class Ui {
     /**
      * Warns that invalid lines were skipped while loading tasks.
      *
-     * @param lineCount number of invalid lines
+     * @param lineCount number of invalid lines.
      */
     public void showSkippedDataLines(int lineCount) {
         String formattedCount = lineCount + (lineCount == 1 ? " line" : " lines");
@@ -152,8 +152,8 @@ public class Ui {
     /**
      * Formats a task count with the appropriate singular or plural noun.
      *
-     * @param taskCount the number of tasks
-     * @return the count followed by {@code task} or {@code tasks}
+     * @param taskCount the number of tasks.
+     * @return the count followed by {@code task} or {@code tasks}.
      */
     private String formatTaskCount(int taskCount) {
         return taskCount + (taskCount == 1 ? " task" : " tasks");

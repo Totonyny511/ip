@@ -19,7 +19,7 @@ public class TaskList {
      * Creates a task list containing the supplied tasks.
      * The tasks are copied so callers cannot later change this list indirectly.
      *
-     * @param tasks tasks with which to initialize the list
+     * @param tasks tasks with which to initialize the list.
      */
     public TaskList(List<Task> tasks) {
         this.tasks = new ArrayList<>(tasks);
@@ -28,7 +28,7 @@ public class TaskList {
     /**
      * Adds a task to the end of the list.
      *
-     * @param task the task to add
+     * @param task the task to add.
      */
     public void add(Task task) {
         tasks.add(task);
@@ -37,8 +37,8 @@ public class TaskList {
     /**
      * Removes and returns the task at a zero-based index.
      *
-     * @param taskIndex zero-based index of the task to remove
-     * @return the removed task
+     * @param taskIndex zero-based index of the task to remove.
+     * @return the removed task.
      */
     public Task delete(int taskIndex) {
         return tasks.remove(taskIndex);
@@ -47,8 +47,8 @@ public class TaskList {
     /**
      * Marks the task at a zero-based index as complete.
      *
-     * @param taskIndex zero-based index of the task to mark
-     * @return the task after it has been marked
+     * @param taskIndex zero-based index of the task to mark.
+     * @return the task after it has been marked.
      */
     public Task mark(int taskIndex) {
         Task task = tasks.get(taskIndex);
@@ -59,8 +59,8 @@ public class TaskList {
     /**
      * Marks the task at a zero-based index as incomplete.
      *
-     * @param taskIndex zero-based index of the task to unmark
-     * @return the task after it has been unmarked
+     * @param taskIndex zero-based index of the task to unmark.
+     * @return the task after it has been unmarked.
      */
     public Task unmark(int taskIndex) {
         Task task = tasks.get(taskIndex);
@@ -71,8 +71,8 @@ public class TaskList {
     /**
      * Returns the task at a zero-based index.
      *
-     * @param taskIndex zero-based index of the task
-     * @return the requested task
+     * @param taskIndex zero-based index of the task.
+     * @return the requested task.
      */
     public Task get(int taskIndex) {
         return tasks.get(taskIndex);
@@ -81,7 +81,7 @@ public class TaskList {
     /**
      * Returns how many tasks are in the list.
      *
-     * @return the number of tasks
+     * @return the number of tasks.
      */
     public int size() {
         return tasks.size();
@@ -90,7 +90,7 @@ public class TaskList {
     /**
      * Returns an immutable snapshot for saving the current tasks.
      *
-     * @return a snapshot of the tasks in list order
+     * @return a snapshot of the tasks in list order.
      */
     public List<Task> getTasks() {
         return List.copyOf(tasks);

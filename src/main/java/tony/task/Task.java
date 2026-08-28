@@ -15,7 +15,7 @@ public abstract class Task {
     /**
      * Creates an incomplete task with the given description.
      *
-     * @param description the text describing the task
+     * @param description the text describing the task.
      */
     public Task(String description) {
         this.description = description;
@@ -25,7 +25,7 @@ public abstract class Task {
     /**
      * Returns the icon used to show this task's completion status.
      *
-     * @return {@code X} when complete, or a space when incomplete
+     * @return {@code X} when complete, or a space when incomplete.
      */
     public String getStatusIcon() {
         return isDone ? "X" : " ";
@@ -44,7 +44,7 @@ public abstract class Task {
     /**
      * Returns this task's category.
      *
-     * @return the task's type
+     * @return the task's type.
      */
     protected abstract TaskType getTaskType();
 
@@ -52,8 +52,8 @@ public abstract class Task {
      * Returns whether this task falls on the specified date.
      * Tasks without a date return {@code false}.
      *
-     * @param date the date to check
-     * @return whether this task falls on the date
+     * @param date the date to check.
+     * @return whether this task falls on the date.
      */
     public boolean isOnDate(LocalDate date) {
         return false;
@@ -62,7 +62,7 @@ public abstract class Task {
     /**
      * Formats this task as one line for storage on disk.
      *
-     * @return the task type, completion status, and description
+     * @return the task type, completion status, and description.
      */
     public String toDataString() {
         return getTaskType().getIcon() + " | " + (isDone ? "1" : "0") + " | "
@@ -72,8 +72,8 @@ public abstract class Task {
     /**
      * Escapes characters that have a special meaning in the storage format.
      *
-     * @param value a task field to store
-     * @return the field with backslashes and pipe characters escaped
+     * @param value a task field to store.
+     * @return the field with backslashes and pipe characters escaped.
      */
     protected String escapeDataField(String value) {
         return value.replace("\\", "\\\\").replace("|", "\\|");
@@ -82,7 +82,7 @@ public abstract class Task {
     /**
      * Formats this task for display in the task list.
      *
-     * @return the type icon, status icon, and description of this task
+     * @return the type icon, status icon, and description of this task.
      */
     @Override
     public String toString() {
