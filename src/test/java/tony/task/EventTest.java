@@ -16,6 +16,7 @@ public class EventTest {
     private static final LocalDate START_DATE = LocalDate.of(2026, 8, 10);
     private static final LocalDate END_DATE = LocalDate.of(2026, 8, 12);
 
+    /** Verifies that an event rejects a null start date. */
     @Test
     public void constructor_nullStartDate_throwsIllegalArgumentException() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -24,6 +25,7 @@ public class EventTest {
         assertEquals("Event dates cannot be null", exception.getMessage());
     }
 
+    /** Verifies that an event rejects a null end date. */
     @Test
     public void constructor_nullEndDate_throwsIllegalArgumentException() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -32,6 +34,7 @@ public class EventTest {
         assertEquals("Event dates cannot be null", exception.getMessage());
     }
 
+    /** Verifies that an event rejects an end date before its start date. */
     @Test
     public void constructor_endDateBeforeStartDate_throwsIllegalArgumentException() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -40,6 +43,7 @@ public class EventTest {
         assertEquals("An event's end date cannot be before its start date", exception.getMessage());
     }
 
+    /** Verifies that an event does not match a date before it starts. */
     @Test
     public void isOnDate_dateBeforeStart_returnsFalse() {
         Event event = new Event("Attend orientation", START_DATE, END_DATE);
@@ -47,6 +51,7 @@ public class EventTest {
         assertFalse(event.isOnDate(START_DATE.minusDays(1)));
     }
 
+    /** Verifies that an event includes its start date. */
     @Test
     public void isOnDate_dateOnStart_returnsTrue() {
         Event event = new Event("Attend orientation", START_DATE, END_DATE);
@@ -54,6 +59,7 @@ public class EventTest {
         assertTrue(event.isOnDate(START_DATE));
     }
 
+    /** Verifies that an event includes dates between its boundaries. */
     @Test
     public void isOnDate_dateBetweenStartAndEnd_returnsTrue() {
         Event event = new Event("Attend orientation", START_DATE, END_DATE);
@@ -61,6 +67,7 @@ public class EventTest {
         assertTrue(event.isOnDate(START_DATE.plusDays(1)));
     }
 
+    /** Verifies that an event includes its end date. */
     @Test
     public void isOnDate_dateOnEnd_returnsTrue() {
         Event event = new Event("Attend orientation", START_DATE, END_DATE);
@@ -68,6 +75,7 @@ public class EventTest {
         assertTrue(event.isOnDate(END_DATE));
     }
 
+    /** Verifies that an event does not match a date after it ends. */
     @Test
     public void isOnDate_dateAfterEnd_returnsFalse() {
         Event event = new Event("Attend orientation", START_DATE, END_DATE);
@@ -75,6 +83,7 @@ public class EventTest {
         assertFalse(event.isOnDate(END_DATE.plusDays(1)));
     }
 
+    /** Verifies that a single-day event matches its event date. */
     @Test
     public void isOnDate_singleDayEventOnEventDate_returnsTrue() {
         Event event = new Event("Submit project", START_DATE, START_DATE);
@@ -82,6 +91,7 @@ public class EventTest {
         assertTrue(event.isOnDate(START_DATE));
     }
 
+    /** Verifies that an event does not match a null date. */
     @Test
     public void isOnDate_nullDate_returnsFalse() {
         Event event = new Event("Attend orientation", START_DATE, END_DATE);
@@ -89,6 +99,7 @@ public class EventTest {
         assertFalse(event.isOnDate(null));
     }
 
+    /** Verifies the storage format of an incomplete event. */
     @Test
     public void toDataString_incompleteEvent_returnsStorageFormat() {
         Event event = new Event("Attend orientation", START_DATE, END_DATE);
@@ -97,6 +108,7 @@ public class EventTest {
                 event.toDataString());
     }
 
+    /** Verifies that event storage formatting records completion. */
     @Test
     public void toDataString_completedEvent_returnsCompletedStatus() {
         Event event = new Event("Attend orientation", START_DATE, END_DATE);
@@ -106,6 +118,7 @@ public class EventTest {
                 event.toDataString());
     }
 
+    /** Verifies that event storage formatting escapes special characters. */
     @Test
     public void toDataString_descriptionWithSpecialCharacters_escapesDescription() {
         Event event = new Event("Compare A | B at C:\\notes", START_DATE, END_DATE);
@@ -114,6 +127,7 @@ public class EventTest {
                 event.toDataString());
     }
 
+    /** Verifies the display format of an incomplete event. */
     @Test
     public void toString_incompleteEvent_returnsDisplayFormat() {
         Event event = new Event("Attend orientation", START_DATE, END_DATE);
@@ -122,6 +136,7 @@ public class EventTest {
                 event.toString());
     }
 
+    /** Verifies that display formatting shows a completed event. */
     @Test
     public void toString_completedEvent_returnsCompletedStatus() {
         Event event = new Event("Attend orientation", START_DATE, END_DATE);

@@ -13,6 +13,11 @@ public class Todo extends Task {
         super(description);
     }
 
+    /**
+     * Returns the to-do task category.
+     *
+     * @return the to-do task type
+     */
     @Override
     protected TaskType getTaskType() {
         return TaskType.TODO;
