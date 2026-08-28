@@ -1,4 +1,4 @@
-A# Project context
+# Project context
 
 This repository is a starter template for a greenfield Java project used in an introductory software engineering course in an undergraduate computer science program. Students use it as the starting point for their own projects.
 
@@ -24,6 +24,12 @@ Unless the user says otherwise, assume that you are assisting a student working 
 
 # Project-specific requirements
 
+## Java coding standard
+
+Invoke the project-specific `$seedu-java-coding-standard` skill whenever creating, editing, or reviewing Java code.
+All Java code in this project must follow the SE-EDU basic and intermediate Java coding standard captured by that
+skill. Review affected Java files for compliance after every code change.
+
 ## Java version:
 
 Ensure that Java 25 is used when running the application or build tasks. On macOS, use `sdk use java 25.0.3.fx-zulu` to switch to Java 25 if needed.
@@ -48,6 +54,8 @@ actual outputs and stop the UI test session as required by the skill.
 
 ## Git
 
+Invoke the project-specific `$seedu-git-standard` skill whenever proposing or creating a commit, commit message, or
+branch name. All future commits in this project must follow the SE-EDU Git conventions captured by that skill.
 Use lightweight tags unless the user requests an annotated tag.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
 Do not commit or push unless explicitly asked.

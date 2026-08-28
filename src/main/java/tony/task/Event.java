@@ -13,28 +13,28 @@ public class Event extends Task {
             DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
 
     /** The first date of the event. */
-    private final LocalDate from;
+    private final LocalDate startDate;
 
     /** The last date of the event. */
-    private final LocalDate to;
+    private final LocalDate endDate;
 
     /**
      * Creates an incomplete event task.
      *
-     * @param description the text describing the event
-     * @param from the event start date
-     * @param to the event end date
+     * @param description the text describing the event.
+     * @param startDate the event start date.
+     * @param endDate the event end date.
      */
-    public Event(String description, LocalDate from, LocalDate to) {
+    public Event(String description, LocalDate startDate, LocalDate endDate) {
         super(description);
-        if (from == null || to == null) {
+        if (startDate == null || endDate == null) {
             throw new IllegalArgumentException("Event dates cannot be null");
         }
-        if (to.isBefore(from)) {
+        if (endDate.isBefore(startDate)) {
             throw new IllegalArgumentException("An event's end date cannot be before its start date");
         }
-        this.from = from;
-        this.to = to;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     /**
@@ -55,7 +55,7 @@ public class Event extends Task {
      */
     @Override
     public boolean isOnDate(LocalDate date) {
-        return date != null && !date.isBefore(from) && !date.isAfter(to);
+        return date != null && !date.isBefore(startDate) && !date.isAfter(endDate);
     }
 
     /**
@@ -65,7 +65,7 @@ public class Event extends Task {
      */
     @Override
     public String toDataString() {
-        return super.toDataString() + " | " + from + " | " + to;
+        return super.toDataString() + " | " + startDate + " | " + endDate;
     }
 
     /**
@@ -75,7 +75,7 @@ public class Event extends Task {
      */
     @Override
     public String toString() {
-        return super.toString() + " (from: " + from.format(DISPLAY_DATE_FORMAT)
-                + " to: " + to.format(DISPLAY_DATE_FORMAT) + ")";
+        return super.toString() + " (from: " + startDate.format(DISPLAY_DATE_FORMAT)
+                + " to: " + endDate.format(DISPLAY_DATE_FORMAT) + ")";
     }
 }
