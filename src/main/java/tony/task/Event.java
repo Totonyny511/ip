@@ -37,21 +37,42 @@ public class Event extends Task {
         this.to = to;
     }
 
+    /**
+     * Returns the event task category.
+     *
+     * @return the event task type
+     */
     @Override
     protected TaskType getTaskType() {
         return TaskType.EVENT;
     }
 
+    /**
+     * Returns whether the specified date is within the event's inclusive date range.
+     *
+     * @param date the date to check
+     * @return whether the date is between the start and end dates, inclusive
+     */
     @Override
     public boolean isOnDate(LocalDate date) {
         return date != null && !date.isBefore(from) && !date.isAfter(to);
     }
 
+    /**
+     * Formats this event as one line for storage on disk.
+     *
+     * @return the task fields followed by the event's start and end dates
+     */
     @Override
     public String toDataString() {
         return super.toDataString() + " | " + from + " | " + to;
     }
 
+    /**
+     * Formats this event for display in the task list.
+     *
+     * @return the task details followed by the formatted event date range
+     */
     @Override
     public String toString() {
         return super.toString() + " (from: " + from.format(DISPLAY_DATE_FORMAT)

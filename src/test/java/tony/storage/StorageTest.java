@@ -25,6 +25,7 @@ public class StorageTest {
     @TempDir
     private Path temporaryDirectory;
 
+    /** Verifies that loading a missing file produces an empty result. */
     @Test
     public void load_missingFile_returnsEmptyResult() throws IOException {
         Storage storage = new Storage(temporaryDirectory.resolve("missing/tasks.txt"));
@@ -35,6 +36,7 @@ public class StorageTest {
         assertEquals(0, result.getSkippedLineCount());
     }
 
+    /** Verifies that loading reconstructs every task type and unescapes descriptions. */
     @Test
     public void load_validTaskTypesAndEscapedDescriptions_reconstructsTasks() throws IOException {
         Path dataFile = temporaryDirectory.resolve("tasks.txt");
@@ -54,6 +56,7 @@ public class StorageTest {
         assertEquals(0, result.getSkippedLineCount());
     }
 
+    /** Verifies that loading preserves legacy backslashes that are not escape characters. */
     @Test
     public void load_legacyUnescapedBackslash_preservesBackslash() throws IOException {
         Path dataFile = temporaryDirectory.resolve("tasks.txt");
@@ -66,6 +69,7 @@ public class StorageTest {
         assertEquals(0, result.getSkippedLineCount());
     }
 
+    /** Verifies that loading ignores blank lines and counts malformed lines. */
     @Test
     public void load_blankAndMalformedLines_skipsOnlyMalformedNonBlankLines() throws IOException {
         Path dataFile = temporaryDirectory.resolve("tasks.txt");
@@ -89,6 +93,7 @@ public class StorageTest {
         assertEquals(7, result.getSkippedLineCount());
     }
 
+    /** Verifies that loading a directory as a data file reports an I/O error. */
     @Test
     public void load_fileIsDirectory_throwsIOException() {
         Storage storage = new Storage(temporaryDirectory);
@@ -96,6 +101,7 @@ public class StorageTest {
         assertThrows(IOException.class, storage::load);
     }
 
+    /** Verifies that saving creates parent directories and writes all task types. */
     @Test
     public void save_taskList_createsParentDirectoryAndWritesAllTasks() throws IOException {
         Path dataFile = temporaryDirectory.resolve("nested/data/tasks.txt");
@@ -115,6 +121,7 @@ public class StorageTest {
                 Files.readAllLines(dataFile));
     }
 
+    /** Verifies that saving replaces obsolete file contents. */
     @Test
     public void save_existingFile_replacesOldContents() throws IOException {
         Path dataFile = temporaryDirectory.resolve("tasks.txt");
@@ -126,6 +133,7 @@ public class StorageTest {
         assertEquals(List.of("T | 0 | current task"), Files.readAllLines(dataFile));
     }
 
+    /** Verifies that saving reports an I/O error when the parent path is a file. */
     @Test
     public void save_parentPathIsFile_throwsIOException() throws IOException {
         Path parentFile = temporaryDirectory.resolve("not-a-directory");

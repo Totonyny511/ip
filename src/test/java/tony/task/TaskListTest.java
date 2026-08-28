@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
  * Tests task-list mutation and protection of its internal list structure.
  */
 public class TaskListTest {
+    /** Verifies that construction protects the task list from later source-list changes. */
     @Test
     public void constructor_sourceListChangedAfterConstruction_taskListUnaffected() {
         Todo originalTask = new Todo("original task");
@@ -25,6 +26,7 @@ public class TaskListTest {
         assertSame(originalTask, taskList.get(0));
     }
 
+    /** Verifies that adding a task appends it to the list. */
     @Test
     public void add_task_appendsTask() {
         Todo firstTask = new Todo("first task");
@@ -37,6 +39,7 @@ public class TaskListTest {
         assertSame(secondTask, taskList.get(1));
     }
 
+    /** Verifies that deletion removes and returns the selected task. */
     @Test
     public void delete_middleTask_removesAndReturnsTask() {
         Todo firstTask = new Todo("first task");
@@ -50,6 +53,7 @@ public class TaskListTest {
         assertEquals(List.of(firstTask, lastTask), taskList.getTasks());
     }
 
+    /** Verifies that marking a task completes and returns the selected task. */
     @Test
     public void mark_validIndex_marksAndReturnsSelectedTask() {
         Todo firstTask = new Todo("first task");
@@ -63,6 +67,7 @@ public class TaskListTest {
         assertEquals(" ", firstTask.getStatusIcon());
     }
 
+    /** Verifies that unmarking a task makes and returns it as incomplete. */
     @Test
     public void unmark_completedTask_marksAndReturnsSelectedTaskAsIncomplete() {
         Todo selectedTask = new Todo("selected task");
@@ -75,6 +80,7 @@ public class TaskListTest {
         assertEquals(" ", selectedTask.getStatusIcon());
     }
 
+    /** Verifies that callers cannot modify the returned task snapshot. */
     @Test
     public void getTasks_returnedListCannotBeModified() {
         TaskList taskList = new TaskList(List.of(new Todo("task")));
@@ -84,6 +90,7 @@ public class TaskListTest {
                 () -> tasks.add(new Todo("another task")));
     }
 
+    /** Verifies that a task snapshot is unaffected by later additions. */
     @Test
     public void getTasks_taskAddedAfterSnapshot_snapshotUnaffected() {
         TaskList taskList = new TaskList(List.of(new Todo("original task")));
@@ -95,6 +102,7 @@ public class TaskListTest {
         assertEquals(2, taskList.size());
     }
 
+    /** Verifies that list operations reject an out-of-range index. */
     @Test
     public void mutationMethods_indexOutOfRange_throwIndexOutOfBoundsException() {
         TaskList taskList = new TaskList();
