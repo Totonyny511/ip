@@ -70,6 +70,25 @@ public class Ui {
      */
     public void showTasks(TaskList tasks) {
         System.out.println("Here are the tasks in your list:");
+        showNumberedTasks(tasks);
+    }
+
+    /**
+     * Displays tasks matching a search with one-based result numbers.
+     *
+     * @param tasks matching tasks to display
+     */
+    public void showMatchingTasks(TaskList tasks) {
+        System.out.println("Here are the matching tasks in your list:");
+        showNumberedTasks(tasks);
+    }
+
+    /**
+     * Displays tasks with one-based numbers in their current order.
+     *
+     * @param tasks tasks to display
+     */
+    private void showNumberedTasks(TaskList tasks) {
         for (int index = 0; index < tasks.size(); index++) {
             System.out.println((index + 1) + "." + tasks.get(index));
         }

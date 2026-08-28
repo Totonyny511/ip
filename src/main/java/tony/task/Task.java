@@ -1,6 +1,7 @@
 package tony.task;
 
 import java.time.LocalDate;
+import java.util.Locale;
 
 /**
  * Represents a task that can be completed or left incomplete.
@@ -39,6 +40,16 @@ public abstract class Task {
     /** Marks this task as incomplete. */
     public void markAsUndone() {
         isDone = false;
+    }
+
+    /**
+     * Returns whether this task's description contains a keyword, ignoring letter case.
+     *
+     * @param keyword text to search for in the description
+     * @return whether the keyword occurs in the description
+     */
+    public boolean descriptionContains(String keyword) {
+        return description.toLowerCase(Locale.ROOT).contains(keyword.toLowerCase(Locale.ROOT));
     }
 
     /**
