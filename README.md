@@ -23,3 +23,23 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
    ```
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
+
+## Building and running the fat JAR
+
+A fat JAR contains the application and all of its runtime dependencies, so it can be run without assembling a separate classpath.
+
+1. In a terminal opened at the project root, select Java 25:
+   ```shell
+   sdk use java 25.0.3.fx-zulu
+   ```
+1. Build the fat JAR with the Gradle wrapper:
+   ```shell
+   ./gradlew shadowJar
+   ```
+1. Find the generated JAR at `build/libs/tony.jar`.
+1. From the project root, run it with Java 25:
+   ```shell
+   java -jar build/libs/tony.jar
+   ```
+
+On Windows, use `gradlew.bat shadowJar` for the build command. Run the JAR from the project root so Tony reads and writes its task data under the project's `data` directory.
