@@ -189,16 +189,16 @@ public class Storage {
     /**
      * Rewrites the data file so it represents the complete current task list.
      *
-     * @param tasks the tasks to save
+     * @param tasks the task list to save
      * @throws IOException if the directory or file cannot be written
      */
-    public void save(List<Task> tasks) throws IOException {
+    public void save(TaskList tasks) throws IOException {
         Path parentDirectory = filePath.getParent();
         if (parentDirectory == null) {
             parentDirectory = Path.of(".");
         }
         Files.createDirectories(parentDirectory);
-        List<String> taskLines = tasks.stream()
+        List<String> taskLines = tasks.getTasks().stream()
                 .map(Task::toDataString)
                 .toList();
 

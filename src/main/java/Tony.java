@@ -3,9 +3,6 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 
 /**
  * Starts the Tony chatbot application.
@@ -24,60 +21,49 @@ public class Tony {
      * @param args command-line arguments (not used by this application)
      */
     public static void main(String[] args) {
-        String banner = " _____   ___   _   _ __   __\n"
-                + "|_   _| / _ \\ | \\ | |\\ \\ / /\n"
-                + "  | |  | | | ||  \\| | \\ V /\n"
-                + "  | |  | |_| || |\\  |  | |\n"
-                + "  |_|   \\___/ |_| \\_|  |_|";
-        System.out.println(banner);
-        String line = "________________________________________________";
-
-        System.out.println(line);
-        System.out.println("What can I do for you?");
-        System.out.println(line);
-
-        Scanner scanner = new Scanner(System.in);
+        Ui ui = new Ui();
+        ui.showWelcome();
         Storage storage = new Storage(DEFAULT_DATA_FILE);
-        ArrayList<Task> tasks = loadTasks(storage);
+        TaskList tasks = loadTasks(storage, ui);
 
-        while (scanner.hasNextLine()) {
-            String command = scanner.nextLine();
-            System.out.println(line);
+        while (ui.hasNextCommand()) {
+            String command = ui.readCommand();
+            ui.showLine();
 
             if (command.equals("bye")) {
-                System.out.println("Bye. Hope to see you again soon!");
-                System.out.println(line);
+                ui.showExit();
+                ui.showLine();
                 break;
             }
 
             try {
                 if (command.equals("list")) {
-                    printTasks(tasks);
+                    ui.showTasks(tasks);
                 } else if (isCommand(command, "mark")) {
-                    markTask(command, tasks);
-                    saveTasks(storage, tasks);
+                    ui.showTaskMarked(markTask(command, tasks));
+                    saveTasks(storage, tasks, ui);
                 } else if (isCommand(command, "unmark")) {
-                    unmarkTask(command, tasks);
-                    saveTasks(storage, tasks);
+                    ui.showTaskUnmarked(unmarkTask(command, tasks));
+                    saveTasks(storage, tasks, ui);
                 } else if (isCommand(command, "delete")) {
-                    deleteTask(command, tasks);
-                    saveTasks(storage, tasks);
+                    ui.showTaskDeleted(deleteTask(command, tasks), tasks.size());
+                    saveTasks(storage, tasks, ui);
                 } else if (isCommand(command, "todo")) {
-                    addTask(tasks, createTodo(command));
-                    saveTasks(storage, tasks);
+                    addTask(tasks, createTodo(command), ui);
+                    saveTasks(storage, tasks, ui);
                 } else if (isCommand(command, "deadline")) {
-                    addTask(tasks, createDeadline(command));
-                    saveTasks(storage, tasks);
+                    addTask(tasks, createDeadline(command), ui);
+                    saveTasks(storage, tasks, ui);
                 } else if (isCommand(command, "event")) {
-                    addTask(tasks, createEvent(command));
-                    saveTasks(storage, tasks);
+                    addTask(tasks, createEvent(command), ui);
+                    saveTasks(storage, tasks, ui);
                 } else {
                     throw new TonyException("I don't recognize that command. Try todo, deadline, event, list, mark, unmark, delete, or bye.");
                 }
             } catch (TonyException exception) {
-                System.out.println("Oops: " + exception.getMessage());
+                ui.showError(exception.getMessage());
             }
-            System.out.println(line);
+            ui.showLine();
         }
     }
 
@@ -85,19 +71,19 @@ public class Tony {
      * Loads saved tasks while allowing the chatbot to start if the file cannot be read.
      *
      * @param storage the task storage to read
+     * @param ui the console UI used to show loading warnings
      * @return the valid tasks loaded from disk, or an empty list after a read error
      */
-    private static ArrayList<Task> loadTasks(Storage storage) {
+    private static TaskList loadTasks(Storage storage, Ui ui) {
         try {
             Storage.LoadResult result = storage.load();
             if (result.getSkippedLineCount() > 0) {
-                System.out.println("Warning: I skipped " + formatLineCount(result.getSkippedLineCount())
-                        + " in the data file because they were invalid.");
+                ui.showSkippedDataLines(result.getSkippedLineCount());
             }
-            return result.getTasks();
+            return new TaskList(result.getTasks());
         } catch (IOException exception) {
-            System.out.println("Warning: I couldn't read the data file. Starting with an empty task list.");
-            return new ArrayList<>();
+            ui.showLoadingError();
+            return new TaskList();
         }
     }
 
@@ -106,48 +92,26 @@ public class Tony {
      *
      * @param storage the task storage to write
      * @param tasks the current tasks
+     * @param ui the console UI used to show saving warnings
      */
-    private static void saveTasks(Storage storage, List<Task> tasks) {
+    private static void saveTasks(Storage storage, TaskList tasks, Ui ui) {
         try {
             storage.save(tasks);
         } catch (IOException exception) {
-            System.out.println("Warning: I couldn't save your tasks. Your latest changes are only in this session.");
+            ui.showSavingError();
         }
     }
 
     /**
-     * Formats the number of invalid data-file lines for a warning message.
-     *
-     * @param lineCount number of invalid lines
-     * @return the count with a singular or plural noun
-     */
-    private static String formatLineCount(int lineCount) {
-        return lineCount + (lineCount == 1 ? " line" : " lines");
-    }
-
-    /**
-     * Prints each stored task with its completion status and one-based number.
-     *
-     * @param tasks the tasks currently stored in the list
-     */
-    private static void printTasks(ArrayList<Task> tasks) {
-        System.out.println("Here are the tasks in your list:");
-        for (int index = 0; index < tasks.size(); index++) {
-            System.out.println((index + 1) + "." + tasks.get(index));
-        }
-    }
-
-    /**
-     * Stores a task and displays the confirmation message.
+     * Stores a task and shows the updated task count.
      *
      * @param tasks the list in which to store the task
      * @param task the task to store
+     * @param ui the console UI used to show confirmation
      */
-    private static void addTask(List<Task> tasks, Task task) {
+    private static void addTask(TaskList tasks, Task task, Ui ui) {
         tasks.add(task);
-        System.out.println("Got it. I've added this task:");
-        System.out.println("  " + task);
-        System.out.println("Now you have " + formatTaskCount(tasks.size()) + " in the list.");
+        ui.showTaskAdded(task, tasks.size());
     }
 
     /**
@@ -156,13 +120,12 @@ public class Tony {
      *
      * @param command the entered command, beginning with {@code mark }
      * @param tasks the tasks currently stored in the list
+     * @return the marked task
      * @throws TonyException if the task number is missing, invalid, or out of range
      */
-    private static void markTask(String command, List<Task> tasks) throws TonyException {
+    private static Task markTask(String command, TaskList tasks) throws TonyException {
         int taskIndex = getTaskIndex(command, "mark", tasks.size());
-        tasks.get(taskIndex).markAsDone();
-        System.out.println("Nice! I've marked this task as done:");
-        System.out.println("  " + tasks.get(taskIndex));
+        return tasks.mark(taskIndex);
     }
 
     /**
@@ -170,13 +133,12 @@ public class Tony {
      *
      * @param command the entered command, beginning with {@code unmark}
      * @param tasks the tasks currently stored in the list
+     * @return the unmarked task
      * @throws TonyException if the task number is missing, invalid, or out of range
      */
-    private static void unmarkTask(String command, List<Task> tasks) throws TonyException {
+    private static Task unmarkTask(String command, TaskList tasks) throws TonyException {
         int taskIndex = getTaskIndex(command, "unmark", tasks.size());
-        tasks.get(taskIndex).markAsUndone();
-        System.out.println("OK, I've marked this task as not done yet:");
-        System.out.println("  " + tasks.get(taskIndex));
+        return tasks.unmark(taskIndex);
     }
 
     /**
@@ -184,24 +146,12 @@ public class Tony {
      *
      * @param command the entered command, beginning with {@code delete}
      * @param tasks the tasks currently stored in the list
+     * @return the deleted task
      * @throws TonyException if the task number is missing, invalid, or out of range
      */
-    private static void deleteTask(String command, List<Task> tasks) throws TonyException {
+    private static Task deleteTask(String command, TaskList tasks) throws TonyException {
         int taskIndex = getTaskIndex(command, "delete", tasks.size());
-        Task removedTask = tasks.remove(taskIndex);
-        System.out.println("Noted. I've removed this task:");
-        System.out.println("  " + removedTask);
-        System.out.println("Now you have " + formatTaskCount(tasks.size()) + " in the list.");
-    }
-
-    /**
-     * Formats a task count with the appropriate singular or plural noun.
-     *
-     * @param taskCount the number of tasks in the list
-     * @return the count followed by {@code task} or {@code tasks}
-     */
-    private static String formatTaskCount(int taskCount) {
-        return taskCount + (taskCount == 1 ? " task" : " tasks");
+        return tasks.delete(taskIndex);
     }
 
     /**
