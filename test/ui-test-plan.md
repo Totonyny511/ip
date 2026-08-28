@@ -4,7 +4,7 @@
 
 **Aim:** Verifies that to-dos, deadlines, and events are stored and displayed with their type, status, and formatted dates.
 
-**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony'`
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/*.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
 
 **Inputs:**
 ```text
@@ -60,7 +60,7 @@ ________________________________________________
 
 **Aim:** Verifies that missing task details and unknown commands show specific error messages without adding or changing tasks; valid commands between the errors still work.
 
-**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony'`
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/*.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
 
 **Inputs:**
 ```text
@@ -132,7 +132,7 @@ ________________________________________________
 
 **Aim:** Verifies that `delete` removes the requested task, displays its details and the updated task count, and leaves the remaining tasks consecutively numbered.
 
-**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony'`
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/*.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
 
 **Inputs:**
 ```text
@@ -203,7 +203,7 @@ ________________________________________________
 
 **Aim:** Verifies that an empty list can be displayed, deletion from it is rejected, and missing, out-of-range, and non-numeric delete inputs do not change an existing task.
 
-**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony'`
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/*.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
 
 **Inputs:**
 ```text
@@ -270,7 +270,7 @@ ________________________________________________
 
 **Aim:** Verifies that deletion works at both list boundaries and that its confirmation retains the removed task's completion status.
 
-**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony'`
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/*.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
 
 **Inputs:**
 ```text
@@ -334,7 +334,7 @@ ________________________________________________
 
 **Aim:** Verifies that invalid task numbers and non-numeric `mark` inputs are rejected, and that each subsequent list still shows the original incomplete task until a valid mark command succeeds.
 
-**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony'`
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/*.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
 
 **Inputs:**
 ```text
@@ -403,7 +403,7 @@ ________________________________________________
 
 **Aim:** Verifies that malformed and out-of-range `unmark` commands do not undo a completed task, while a later valid command does.
 
-**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony'`
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/*.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
 
 **Inputs:**
 ```text
@@ -477,7 +477,7 @@ ________________________________________________
 
 **Aim:** Verifies that adding each task type, marking, unmarking, and deleting result in a data file that represents the latest task list.
 
-**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony && printf "Saved file:\\n" && sed -n "1,20p" data/tony.txt'`
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/*.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony && printf "Saved file:\\n" && sed -n "1,20p" data/tony.txt'`
 
 **Inputs:**
 ```text
@@ -540,7 +540,7 @@ E | 0 | project meeting | 2019-08-06 | 2019-08-07
 
 **Aim:** Verifies that a saved to-do, deadline, and event are reconstructed with their descriptions, date fields, and completion states on startup.
 
-**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && printf "T | 1 | read book\\nD | 0 | return book | 2019-06-06\\nE | 1 | project meeting | 2019-08-06 | 2019-08-07\\n" > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony'`
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && printf "T | 1 | read book\\nD | 0 | return book | 2019-06-06\\nE | 1 | project meeting | 2019-08-06 | 2019-08-07\\n" > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/*.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
 
 **Inputs:**
 ```text
@@ -573,7 +573,7 @@ ________________________________________________
 
 **Aim:** Verifies that first-time startup treats a missing data file as an empty task list without displaying an error.
 
-**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && rm -f data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony'`
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && rm -f data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/*.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
 
 **Inputs:**
 ```text
@@ -603,7 +603,7 @@ ________________________________________________
 
 **Aim:** Verifies that blank lines are ignored, malformed records are skipped with one warning, and valid records still load.
 
-**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && printf "%s\\n" "T | 1 | valid task" "" "T | 2 | bad status" "X | 0 | unknown type" "D | 0 | missing due date" "E | 0 | too many | start | end | extra" "T | 0 | " "D | 0 | impossible date | 2019-02-30" "E | 0 | backwards | 2019-10-20 | 2019-10-19" "D | 0 | return book | 2019-10-18" > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony'`
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && printf "%s\\n" "T | 1 | valid task" "" "T | 2 | bad status" "X | 0 | unknown type" "D | 0 | missing due date" "E | 0 | too many | start | end | extra" "T | 0 | " "D | 0 | impossible date | 2019-02-30" "E | 0 | backwards | 2019-10-20 | 2019-10-19" "D | 0 | return book | 2019-10-18" > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/*.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
 
 **Inputs:**
 ```text
@@ -636,7 +636,7 @@ ________________________________________________
 
 **Aim:** Verifies strict `yyyy-MM-dd` parsing, leap-day support, formatted date display, and rejection of event ranges whose end precedes their start.
 
-**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony'`
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/*.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
 
 **Inputs:**
 ```text
@@ -696,7 +696,7 @@ ________________________________________________
 
 **Aim:** Verifies that an unreadable storage target starts with an empty list and that a later save failure keeps the chatbot session usable.
 
-**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && rm -f data/tony.txt && mkdir data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony && rmdir data/tony.txt'`
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && rm -f data/tony.txt && mkdir data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/*.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony && rmdir data/tony.txt'`
 
 **Inputs:**
 ```text
@@ -735,7 +735,7 @@ ________________________________________________
 
 **Aim:** Verifies that pipe and backslash characters in task fields are escaped when saved instead of corrupting the storage format.
 
-**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony && printf "Saved file:\\n" && sed -n "1,20p" data/tony.txt'`
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/*.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony && printf "Saved file:\\n" && sed -n "1,20p" data/tony.txt'`
 
 **Inputs:**
 ```text
@@ -776,7 +776,7 @@ D | 0 | review C:\\notes \| archive | 2019-10-18
 
 **Aim:** Verifies that escaped pipe and backslash characters are decoded when saved tasks are loaded.
 
-**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && printf "%s\\n" "T | 1 | compare A \\| B" "D | 0 | review C:\\\\notes \\| archive | 2019-10-18" > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/*.java && java -cp /private/tmp/tony-ui-classes Tony'`
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && printf "%s\\n" "T | 1 | compare A \\| B" "D | 0 | review C:\\\\notes \\| archive | 2019-10-18" > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/*.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
 
 **Inputs:**
 ```text

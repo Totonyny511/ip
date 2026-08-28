@@ -1,3 +1,5 @@
+package tony.task;
+
 /**
  * Represents the supported kinds of tasks and their list-display icons.
  */

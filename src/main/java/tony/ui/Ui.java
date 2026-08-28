@@ -1,4 +1,9 @@
+package tony.ui;
+
 import java.util.Scanner;
+
+import tony.task.Task;
+import tony.task.TaskList;
 
 /**
  * Handles all console input and output for the Tony chatbot.

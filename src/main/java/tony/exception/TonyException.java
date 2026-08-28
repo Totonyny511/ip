@@ -1,3 +1,5 @@
+package tony.exception;
+
 /**
  * Represents an error caused by a command entered into the Tony chatbot.
  */
