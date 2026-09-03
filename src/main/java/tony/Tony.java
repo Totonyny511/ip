@@ -73,8 +73,6 @@ public class Tony {
                 } else {
                     throw new TonyException("I don't recognize that command. "
                             + "Try todo, deadline, event, list, mark, unmark, delete, or bye.");
-                    throw new TonyException("I don't recognize that command. Try todo, deadline, event, list, "
-                            + "find, mark, unmark, delete, or bye.");
                 }
             } catch (TonyException exception) {
                 ui.showError(exception.getMessage());

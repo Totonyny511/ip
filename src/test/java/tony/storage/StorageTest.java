@@ -95,7 +95,7 @@ public class StorageTest {
 
     /** Verifies that loading a directory as a data file reports an I/O error. */
     @Test
-    public void load_fileIsDirectory_throwsIOException() {
+    public void load_fileIsDirectory_throwsIoException() {
         Storage storage = new Storage(temporaryDirectory);
 
         assertThrows(IOException.class, storage::load);
@@ -135,7 +135,7 @@ public class StorageTest {
 
     /** Verifies that saving reports an I/O error when the parent path is a file. */
     @Test
-    public void save_parentPathIsFile_throwsIOException() throws IOException {
+    public void save_parentPathIsFile_throwsIoException() throws IOException {
         Path parentFile = temporaryDirectory.resolve("not-a-directory");
         Files.writeString(parentFile, "content");
         Storage storage = new Storage(parentFile.resolve("tasks.txt"));

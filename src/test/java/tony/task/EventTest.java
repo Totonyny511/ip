@@ -19,8 +19,8 @@ public class EventTest {
     /** Verifies that an event rejects a null start date. */
     @Test
     public void constructor_nullStartDate_throwsIllegalArgumentException() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> new Event("Attend orientation", null, END_DATE));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                new Event("Attend orientation", null, END_DATE));
 
         assertEquals("Event dates cannot be null", exception.getMessage());
     }
@@ -28,8 +28,8 @@ public class EventTest {
     /** Verifies that an event rejects a null end date. */
     @Test
     public void constructor_nullEndDate_throwsIllegalArgumentException() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> new Event("Attend orientation", START_DATE, null));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                new Event("Attend orientation", START_DATE, null));
 
         assertEquals("Event dates cannot be null", exception.getMessage());
     }
@@ -37,8 +37,8 @@ public class EventTest {
     /** Verifies that an event rejects an end date before its start date. */
     @Test
     public void constructor_endDateBeforeStartDate_throwsIllegalArgumentException() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> new Event("Attend orientation", START_DATE, START_DATE.minusDays(1)));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                new Event("Attend orientation", START_DATE, START_DATE.minusDays(1)));
 
         assertEquals("An event's end date cannot be before its start date", exception.getMessage());
     }
