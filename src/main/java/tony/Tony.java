@@ -16,7 +16,7 @@ import tony.task.Todo;
 import tony.ui.Ui;
 
 /**
- * Starts the Tony chatbot application.
+ * Processes commands for the Tony chatbot and stores the user's tasks.
  */
 public class Tony {
     /** Default location of the task data file. */
@@ -25,157 +25,178 @@ public class Tony {
     /** Required format for dates entered in commands. */
     private static final DateTimeFormatter INPUT_DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE;
 
+    /** Message displayed when Tony cannot read its data file. */
+    private static final String LOADING_ERROR_MESSAGE =
+            "Warning: I couldn't read the data file. Starting with an empty task list.";
+
+    /** Message displayed when Tony cannot save the current tasks. */
+    private static final String SAVING_ERROR_MESSAGE =
+            "Warning: I couldn't save your tasks. Your latest changes are only in this session.";
+
+    /** Stores tasks between application sessions. */
+    private final Storage storage;
+
+    /** Tasks available during the current session. */
+    private final TaskList tasks;
+
+    /** Optional warning generated while loading the saved tasks. */
+    private final String startupMessage;
+
+    /** Creates Tony using the default task data file. */
+    public Tony() {
+        this(DEFAULT_DATA_FILE);
+    }
+
     /**
-     * Displays Tony's greeting, stores entered tasks, lists them on request,
-     * and exits when the user enters {@code bye}.
+     * Creates Tony using a specified task data file.
+     * This overload allows callers such as tests to keep their data isolated.
+     *
+     * @param dataFile file used to load and save tasks.
+     */
+    public Tony(Path dataFile) {
+        storage = new Storage(dataFile);
+
+        TaskList loadedTasks;
+        String loadingMessage = "";
+        try {
+            Storage.LoadResult result = storage.load();
+            loadedTasks = new TaskList(result.getTasks());
+            if (result.getSkippedLineCount() > 0) {
+                loadingMessage = formatSkippedDataLines(result.getSkippedLineCount());
+            }
+        } catch (IOException exception) {
+            loadedTasks = new TaskList();
+            loadingMessage = LOADING_ERROR_MESSAGE;
+        }
+
+        tasks = loadedTasks;
+        startupMessage = loadingMessage;
+    }
+
+    /**
+     * Runs Tony using its original console interface.
      *
      * @param args command-line arguments (not used by this application).
      */
     public static void main(String[] args) {
         Ui ui = new Ui();
         ui.showWelcome();
-        Storage storage = new Storage(DEFAULT_DATA_FILE);
-        TaskList tasks = loadTasks(storage, ui);
+
+        Tony tony = new Tony();
+        if (!tony.getStartupMessage().isEmpty()) {
+            ui.showMessage(tony.getStartupMessage());
+        }
 
         while (ui.hasNextCommand()) {
             String command = ui.readCommand();
             ui.showLine();
+            ui.showMessage(tony.getResponse(command));
+            ui.showLine();
 
-            if (command.equals("bye")) {
-                ui.showExit();
-                ui.showLine();
+            if (isExitCommand(command)) {
                 break;
             }
-
-            try {
-                if (command.equals("list")) {
-                    ui.showTasks(tasks);
-                } else if (isCommand(command, "find")) {
-                    ui.showMatchingTasks(findTasks(command, tasks));
-                } else if (isCommand(command, "mark")) {
-                    ui.showTaskMarked(markTask(command, tasks));
-                    saveTasks(storage, tasks, ui);
-                } else if (isCommand(command, "unmark")) {
-                    ui.showTaskUnmarked(unmarkTask(command, tasks));
-                    saveTasks(storage, tasks, ui);
-                } else if (isCommand(command, "delete")) {
-                    ui.showTaskDeleted(deleteTask(command, tasks), tasks.size());
-                    saveTasks(storage, tasks, ui);
-                } else if (isCommand(command, "todo")) {
-                    addTask(tasks, createTodo(command), ui);
-                    saveTasks(storage, tasks, ui);
-                } else if (isCommand(command, "deadline")) {
-                    addTask(tasks, createDeadline(command), ui);
-                    saveTasks(storage, tasks, ui);
-                } else if (isCommand(command, "event")) {
-                    addTask(tasks, createEvent(command), ui);
-                    saveTasks(storage, tasks, ui);
-                } else {
-                    throw new TonyException("I don't recognize that command. "
-                            + "Try todo, deadline, event, list, mark, unmark, delete, or bye.");
-                }
-            } catch (TonyException exception) {
-                ui.showError(exception.getMessage());
-            }
-            ui.showLine();
         }
     }
 
     /**
-     * Loads saved tasks while allowing the chatbot to start if the file cannot be read.
+     * Returns any warning generated while loading saved tasks.
+     * An empty string means that startup completed normally.
      *
-     * @param storage the task storage to read.
-     * @param ui the console UI used to show loading warnings.
-     * @return the valid tasks loaded from disk, or an empty list after a read error.
+     * @return the startup warning, or an empty string if there is none.
      */
-    private static TaskList loadTasks(Storage storage, Ui ui) {
+    public String getStartupMessage() {
+        return startupMessage;
+    }
+
+    /**
+     * Executes one user command and returns Tony's complete reply.
+     *
+     * @param command complete command entered by the user.
+     * @return Tony's reply for the command.
+     */
+    public String getResponse(String command) {
+        if (isExitCommand(command)) {
+            return "Bye. Hope to see you again soon!";
+        }
+
         try {
-            Storage.LoadResult result = storage.load();
-            if (result.getSkippedLineCount() > 0) {
-                ui.showSkippedDataLines(result.getSkippedLineCount());
+            if (command.equals("list")) {
+                return formatTasks("Here are the tasks in your list:", tasks);
+            } else if (isCommand(command, "find")) {
+                return formatTasks("Here are the matching tasks in your list:", findTasks(command, tasks));
+            } else if (isCommand(command, "mark")) {
+                Task task = markTask(command, tasks);
+                return appendSavingWarning("Nice! I've marked this task as done:\n  " + task);
+            } else if (isCommand(command, "unmark")) {
+                Task task = unmarkTask(command, tasks);
+                return appendSavingWarning("OK, I've marked this task as not done yet:\n  " + task);
+            } else if (isCommand(command, "delete")) {
+                Task task = deleteTask(command, tasks);
+                String response = "Noted. I've removed this task:\n  " + task
+                        + "\nNow you have " + formatTaskCount(tasks.size()) + " in the list.";
+                return appendSavingWarning(response);
+            } else if (isCommand(command, "todo")) {
+                return addTask(createTodo(command));
+            } else if (isCommand(command, "deadline")) {
+                return addTask(createDeadline(command));
+            } else if (isCommand(command, "event")) {
+                return addTask(createEvent(command));
             }
-            return new TaskList(result.getTasks());
-        } catch (IOException exception) {
-            ui.showLoadingError();
-            return new TaskList();
+            throw new TonyException("I don't recognize that command. "
+                    + "Try todo, deadline, event, list, find, mark, unmark, delete, or bye.");
+        } catch (TonyException exception) {
+            return "Oops: " + exception.getMessage();
         }
     }
 
     /**
-     * Saves tasks while keeping the current session usable after a disk error.
+     * Returns whether a command ends the current conversation.
      *
-     * @param storage the task storage to write.
-     * @param tasks the current tasks.
-     * @param ui the console UI used to show saving warnings.
+     * @param command complete command entered by the user.
+     * @return whether the command is {@code bye}.
      */
-    private static void saveTasks(Storage storage, TaskList tasks, Ui ui) {
+    public static boolean isExitCommand(String command) {
+        return command.equals("bye");
+    }
+
+    /** Stores a task and returns a confirmation with the updated task count. */
+    private String addTask(Task task) {
+        tasks.add(task);
+        String response = "Got it. I've added this task:\n  " + task
+                + "\nNow you have " + formatTaskCount(tasks.size()) + " in the list.";
+        return appendSavingWarning(response);
+    }
+
+    /** Saves the current tasks and appends a warning to the reply after a disk error. */
+    private String appendSavingWarning(String response) {
         try {
             storage.save(tasks);
+            return response;
         } catch (IOException exception) {
-            ui.showSavingError();
+            return response + "\n" + SAVING_ERROR_MESSAGE;
         }
     }
 
-    /**
-     * Stores a task and shows the updated task count.
-     *
-     * @param tasks the list in which to store the task.
-     * @param task the task to store.
-     * @param ui the console UI used to show confirmation.
-     */
-    private static void addTask(TaskList tasks, Task task, Ui ui) {
-        tasks.add(task);
-        ui.showTaskAdded(task, tasks.size());
-    }
-
-    /**
-     * Marks the one-based task number in a {@code mark} command as complete.
-     * Invalid task numbers leave the stored tasks unchanged.
-     *
-     * @param command the entered command, beginning with {@code mark }.
-     * @param tasks the tasks currently stored in the list.
-     * @return the marked task.
-     * @throws TonyException if the task number is missing, invalid, or out of range.
-     */
+    /** Marks the one-based task number in a {@code mark} command as complete. */
     private static Task markTask(String command, TaskList tasks) throws TonyException {
         int taskIndex = getTaskIndex(command, "mark", tasks.size());
         return tasks.mark(taskIndex);
     }
 
-    /**
-     * Marks the one-based task number in an {@code unmark} command as incomplete.
-     *
-     * @param command the entered command, beginning with {@code unmark}.
-     * @param tasks the tasks currently stored in the list.
-     * @return the unmarked task.
-     * @throws TonyException if the task number is missing, invalid, or out of range.
-     */
+    /** Marks the one-based task number in an {@code unmark} command as incomplete. */
     private static Task unmarkTask(String command, TaskList tasks) throws TonyException {
         int taskIndex = getTaskIndex(command, "unmark", tasks.size());
         return tasks.unmark(taskIndex);
     }
 
-    /**
-     * Removes the one-based task number supplied in a {@code delete} command.
-     *
-     * @param command the entered command, beginning with {@code delete}.
-     * @param tasks the tasks currently stored in the list.
-     * @return the deleted task.
-     * @throws TonyException if the task number is missing, invalid, or out of range.
-     */
+    /** Removes the one-based task number supplied in a {@code delete} command. */
     private static Task deleteTask(String command, TaskList tasks) throws TonyException {
         int taskIndex = getTaskIndex(command, "delete", tasks.size());
         return tasks.delete(taskIndex);
     }
 
-    /**
-     * Finds tasks whose descriptions contain the keyword in a {@code find} command.
-     *
-     * @param command the entered command, beginning with {@code find}
-     * @param tasks the tasks currently stored in the list
-     * @return matching tasks in their original list order
-     * @throws TonyException if the keyword is missing
-     */
+    /** Finds tasks whose descriptions contain the keyword in a {@code find} command. */
     private static TaskList findTasks(String command, TaskList tasks) throws TonyException {
         String keyword = command.substring("find".length()).trim();
         if (keyword.isEmpty()) {
@@ -184,24 +205,12 @@ public class Tony {
         return tasks.find(keyword);
     }
 
-    /**
-     * Returns whether the input is a command word, optionally followed by arguments.
-     *
-     * @param input the complete user input.
-     * @param commandWord the command word to match.
-     * @return whether the input names the specified command.
-     */
+    /** Returns whether the input is a command word, optionally followed by arguments. */
     private static boolean isCommand(String input, String commandWord) {
         return input.equals(commandWord) || input.startsWith(commandWord + " ");
     }
 
-    /**
-     * Creates a to-do after checking that it has a description.
-     *
-     * @param command the complete to-do command.
-     * @return the validated to-do task.
-     * @throws TonyException if the description is empty.
-     */
+    /** Creates a to-do after checking that it has a description. */
     private static Todo createTodo(String command) throws TonyException {
         String description = command.substring("todo".length()).trim();
         if (description.isEmpty()) {
@@ -210,13 +219,7 @@ public class Tony {
         return new Todo(description);
     }
 
-    /**
-     * Creates a deadline after checking its description and {@code /by} value.
-     *
-     * @param command the complete deadline command.
-     * @return the validated deadline task.
-     * @throws TonyException if the command is missing required fields.
-     */
+    /** Creates a deadline after checking its description and {@code /by} value. */
     private static Deadline createDeadline(String command) throws TonyException {
         String details = command.substring("deadline".length()).trim();
         int byMarker = details.indexOf(" /by ");
@@ -228,13 +231,7 @@ public class Tony {
         return new Deadline(details.substring(0, byMarker).trim(), dueDate);
     }
 
-    /**
-     * Creates an event after checking its description, start, and end values.
-     *
-     * @param command the complete event command.
-     * @return the validated event task.
-     * @throws TonyException if the command is missing required fields.
-     */
+    /** Creates an event after checking its description, start, and end values. */
     private static Event createEvent(String command) throws TonyException {
         String details = command.substring("event".length()).trim();
         int fromMarker = details.indexOf(" /from ");
@@ -255,13 +252,7 @@ public class Tony {
         return new Event(details.substring(0, fromMarker).trim(), startDate, endDate);
     }
 
-    /**
-     * Parses a date entered in the required ISO format.
-     *
-     * @param dateText the user-entered date.
-     * @return the parsed date.
-     * @throws TonyException if the text is not a valid {@code yyyy-MM-dd} date.
-     */
+    /** Parses a date entered in the required ISO format. */
     private static LocalDate parseDate(String dateText) throws TonyException {
         try {
             return LocalDate.parse(dateText, INPUT_DATE_FORMAT);
@@ -270,15 +261,7 @@ public class Tony {
         }
     }
 
-    /**
-     * Parses and checks the task number supplied to a mark or unmark command.
-     *
-     * @param command the complete command.
-     * @param commandWord either {@code mark} or {@code unmark}.
-     * @param numberOfTasks how many tasks are currently stored.
-     * @return the zero-based index of the requested task.
-     * @throws TonyException if the task number is missing, invalid, or out of range.
-     */
+    /** Parses and checks the task number supplied to a list-changing command. */
     private static int getTaskIndex(String command, String commandWord, int numberOfTasks)
             throws TonyException {
         try {
@@ -296,5 +279,29 @@ public class Tony {
         } catch (NumberFormatException exception) {
             throw new TonyException("Please provide a whole-number task number to " + commandWord + ".");
         }
+    }
+
+    /** Formats a heading and tasks as a numbered, multi-line response. */
+    private static String formatTasks(String heading, TaskList tasks) {
+        StringBuilder response = new StringBuilder(heading);
+        for (int index = 0; index < tasks.size(); index++) {
+            response.append('\n')
+                    .append(index + 1)
+                    .append('.')
+                    .append(tasks.get(index));
+        }
+        return response.toString();
+    }
+
+    /** Formats a task count with the appropriate singular or plural noun. */
+    private static String formatTaskCount(int taskCount) {
+        return taskCount + (taskCount == 1 ? " task" : " tasks");
+    }
+
+    /** Formats a warning for invalid data lines skipped during startup. */
+    private static String formatSkippedDataLines(int lineCount) {
+        String formattedCount = lineCount + (lineCount == 1 ? " line" : " lines");
+        return "Warning: I skipped " + formattedCount
+                + " in the data file because they were invalid.";
     }
 }

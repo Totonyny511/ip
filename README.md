@@ -13,14 +13,8 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
    1. If there are any further prompts, accept the defaults.
 1. Configure the project to use **JDK 25** (not other versions) as explained in [here](https://www.jetbrains.com/help/idea/sdk.html#set-up-jdk).<br>
    In the same dialog, set the **Project language level** field to the `SDK default` option.
-1. After that, locate the `src/main/java/tony/Tony.java` file, right-click it, and choose `Run Tony.main()` (if the code editor is showing compile errors, try restarting the IDE). If the setup is correct, you should see something like the below as the output:
-   ```
-    _____   ___   _   _ __   __
-   |_   _| / _ \ | \ | |\ \ / /
-     | |  | | | ||  \| | \ V /
-     | |  | |_| || |\  |  | |
-     |_|   \___/ |_| \_|  |_|
-   ```
+1. Run the `Launcher` class to open Tony's graphical chat interface. Enter a command in the text field and press
+   <kbd>Enter</kbd> or select **Send**. The command hint at the top of the window lists the supported commands.
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
 
@@ -41,5 +35,10 @@ A fat JAR contains the application and all of its runtime dependencies, so it ca
    ```shell
    java -jar build/libs/tony.jar
    ```
+
+The application opens a chat window. Tony keeps the conversation visible, scrolls to new replies automatically,
+and saves task changes to `data/tony.txt`. Enter `bye` to end the conversation.
+
+To use the original console interface instead, run `tony.Tony` from the IDE.
 
 On Windows, use `gradlew.bat shadowJar` for the build command. Run the JAR from the project root so Tony reads and writes its task data under the project's `data` directory.

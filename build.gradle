@@ -19,7 +19,24 @@ checkstyle {
 }
 
 dependencies {
+    String javaFxVersion = '17.0.7'
+    String operatingSystem = System.getProperty('os.name').toLowerCase()
+    String architecture = System.getProperty('os.arch').toLowerCase()
+    String javaFxPlatform
+    if (operatingSystem.contains('mac')) {
+        javaFxPlatform = architecture.contains('aarch64') || architecture.contains('arm64')
+                ? 'mac-aarch64' : 'mac'
+    } else if (operatingSystem.contains('win')) {
+        javaFxPlatform = 'win'
+    } else {
+        javaFxPlatform = architecture.contains('aarch64') || architecture.contains('arm64')
+                ? 'linux-aarch64' : 'linux'
+    }
     String jUnitVersion = '5.14.4'
+
+    implementation "org.openjfx:javafx-base:${javaFxVersion}:${javaFxPlatform}"
+    implementation "org.openjfx:javafx-controls:${javaFxVersion}:${javaFxPlatform}"
+    implementation "org.openjfx:javafx-graphics:${javaFxVersion}:${javaFxPlatform}"
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${jUnitVersion}"
 
@@ -42,7 +59,7 @@ test {
 }
 
 application {
-    mainClass = 'tony.Tony'
+    mainClass.set('tony.Launcher')
 }
 
 jar {

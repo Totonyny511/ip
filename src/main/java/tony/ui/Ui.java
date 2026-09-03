@@ -58,6 +58,15 @@ public class Ui {
         return scanner.nextLine();
     }
 
+    /**
+     * Displays a complete chatbot response.
+     *
+     * @param message response to display.
+     */
+    public void showMessage(String message) {
+        System.out.println(message);
+    }
+
     /** Displays Tony's farewell message. */
     public void showExit() {
         System.out.println("Bye. Hope to see you again soon!");
