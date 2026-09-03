@@ -110,8 +110,8 @@ public class TaskListTest {
         TaskList taskList = new TaskList(List.of(new Todo("task")));
         List<Task> tasks = taskList.getTasks();
 
-        assertThrows(UnsupportedOperationException.class,
-                () -> tasks.add(new Todo("another task")));
+        assertThrows(UnsupportedOperationException.class, () ->
+                tasks.add(new Todo("another task")));
     }
 
     /** Verifies that a task snapshot is unaffected by later additions. */

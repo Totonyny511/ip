@@ -18,8 +18,8 @@ public class DeadlineTest {
     /** Verifies that a deadline rejects a null due date. */
     @Test
     public void constructor_nullDueDate_throwsIllegalArgumentException() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> new Deadline("Submit report", null));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                new Deadline("Submit report", null));
 
         assertEquals("A deadline date cannot be null", exception.getMessage());
     }
