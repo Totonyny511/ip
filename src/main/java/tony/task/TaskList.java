@@ -18,6 +18,7 @@ public class TaskList {
     /**
      * Creates a task list containing the supplied tasks.
      * The tasks are copied so callers cannot later change this list indirectly.
+     * Accepting a list instead of varargs also lets callers pass an existing task collection directly.
      *
      * @param tasks tasks with which to initialize the list.
      */
@@ -27,6 +28,7 @@ public class TaskList {
 
     /**
      * Adds a task to the end of the list.
+     * Accepting one task instead of varargs keeps each call aligned with one user action.
      *
      * @param task the task to add.
      */
