@@ -2,6 +2,7 @@ package tony.task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Owns the application's tasks and provides operations for changing the list.
@@ -23,6 +24,8 @@ public class TaskList {
      * @param tasks tasks with which to initialize the list.
      */
     public TaskList(List<Task> tasks) {
+        assert tasks != null : "The source task collection must not be null";
+        assert tasks.stream().noneMatch(Objects::isNull) : "A task list must not contain null tasks";
         this.tasks = new ArrayList<>(tasks);
     }
 
@@ -33,6 +36,7 @@ public class TaskList {
      * @param task the task to add.
      */
     public void add(Task task) {
+        assert task != null : "A task list must not contain null tasks";
         tasks.add(task);
     }
 
@@ -78,6 +82,8 @@ public class TaskList {
      * @return matching tasks in their original list order
      */
     public TaskList find(String keyword) {
+        assert keyword != null : "A search keyword must not be null";
+        assert !keyword.isBlank() : "A search keyword must not be blank";
         ArrayList<Task> matchingTasks = new ArrayList<>();
         for (Task task : tasks) {
             if (task.descriptionContains(keyword)) {

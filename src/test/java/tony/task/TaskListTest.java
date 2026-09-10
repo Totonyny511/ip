@@ -13,6 +13,17 @@ import org.junit.jupiter.api.Test;
  * Tests task-list mutation and protection of its internal list structure.
  */
 public class TaskListTest {
+    /** Verifies that a task list rejects null elements that would break every list operation. */
+    @Test
+    public void constructor_nullTask_throwsAssertionError() {
+        ArrayList<Task> sourceTasks = new ArrayList<>();
+        sourceTasks.add(null);
+
+        AssertionError error = assertThrows(AssertionError.class, () -> new TaskList(sourceTasks));
+
+        assertEquals("A task list must not contain null tasks", error.getMessage());
+    }
+
     /** Verifies that construction protects the task list from later source-list changes. */
     @Test
     public void constructor_sourceListChangedAfterConstruction_taskListUnaffected() {
@@ -37,6 +48,16 @@ public class TaskListTest {
 
         assertEquals(2, taskList.size());
         assertSame(secondTask, taskList.get(1));
+    }
+
+    /** Verifies that add preserves the invariant that every list element is a task. */
+    @Test
+    public void add_nullTask_throwsAssertionError() {
+        TaskList taskList = new TaskList();
+
+        AssertionError error = assertThrows(AssertionError.class, () -> taskList.add(null));
+
+        assertEquals("A task list must not contain null tasks", error.getMessage());
     }
 
     /** Verifies that deletion removes and returns the selected task. */
@@ -103,6 +124,16 @@ public class TaskListTest {
         TaskList matches = taskList.find("Jun");
 
         assertEquals(0, matches.size());
+    }
+
+    /** Verifies the command parser's contract that searches have a non-blank keyword. */
+    @Test
+    public void find_blankKeyword_throwsAssertionError() {
+        TaskList taskList = new TaskList(List.of(new Todo("task")));
+
+        AssertionError error = assertThrows(AssertionError.class, () -> taskList.find("  "));
+
+        assertEquals("A search keyword must not be blank", error.getMessage());
     }
 
     @Test
