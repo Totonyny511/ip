@@ -8,10 +8,10 @@ import java.util.Locale;
  */
 public abstract class Task {
     /** The text describing what must be done. */
-    protected String description;
+    private final String description;
 
     /** Whether this task has been completed. */
-    protected boolean isDone;
+    private boolean isDone;
 
     /**
      * Creates an incomplete task with the given description.
@@ -86,7 +86,7 @@ public abstract class Task {
      * @param value a task field to store.
      * @return the field with backslashes and pipe characters escaped.
      */
-    protected String escapeDataField(String value) {
+    private String escapeDataField(String value) {
         return value.replace("\\", "\\\\").replace("|", "\\|");
     }
 
