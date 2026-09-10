@@ -78,12 +78,13 @@ public class TaskList {
      * Finds tasks whose descriptions contain the supplied keyword, ignoring letter case.
      * The returned list is independent of this list, but contains the same task objects.
      *
-     * @param keyword text to search for in task descriptions
-     * @return matching tasks in their original list order
+     * @param keyword text to search for in task descriptions.
+     * @return matching tasks in their original list order.
      */
     public TaskList find(String keyword) {
         assert keyword != null : "A search keyword must not be null";
         assert !keyword.isBlank() : "A search keyword must not be blank";
+
         ArrayList<Task> matchingTasks = new ArrayList<>();
         for (Task task : tasks) {
             if (task.descriptionContains(keyword)) {
