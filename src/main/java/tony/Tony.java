@@ -123,33 +123,38 @@ public class Tony {
         }
 
         try {
-            if (command.equals("list")) {
-                return formatTasks("Here are the tasks in your list:", tasks);
-            } else if (isCommand(command, "find")) {
-                return formatTasks("Here are the matching tasks in your list:", findTasks(command, tasks));
-            } else if (isCommand(command, "mark")) {
-                Task task = markTask(command, tasks);
-                return appendSavingWarning("Nice! I've marked this task as done:\n  " + task);
-            } else if (isCommand(command, "unmark")) {
-                Task task = unmarkTask(command, tasks);
-                return appendSavingWarning("OK, I've marked this task as not done yet:\n  " + task);
-            } else if (isCommand(command, "delete")) {
-                Task task = deleteTask(command, tasks);
-                String response = "Noted. I've removed this task:\n  " + task
-                        + "\nNow you have " + formatTaskCount(tasks.size()) + " in the list.";
-                return appendSavingWarning(response);
-            } else if (isCommand(command, "todo")) {
-                return addTask(createTodo(command));
-            } else if (isCommand(command, "deadline")) {
-                return addTask(createDeadline(command));
-            } else if (isCommand(command, "event")) {
-                return addTask(createEvent(command));
-            }
-            throw new TonyException("I don't recognize that command. "
-                    + "Try todo, deadline, event, list, find, mark, unmark, delete, or bye.");
+            return executeCommand(command);
         } catch (TonyException exception) {
             return "Oops: " + exception.getMessage();
         }
+    }
+
+    /** Executes a recognized non-exit command and formats its successful response. */
+    private String executeCommand(String command) throws TonyException {
+        if (command.equals("list")) {
+            return formatTasks("Here are the tasks in your list:", tasks);
+        } else if (isCommand(command, "find")) {
+            return formatTasks("Here are the matching tasks in your list:", findTasks(command, tasks));
+        } else if (isCommand(command, "mark")) {
+            Task task = markTask(command, tasks);
+            return appendSavingWarning("Nice! I've marked this task as done:\n  " + task);
+        } else if (isCommand(command, "unmark")) {
+            Task task = unmarkTask(command, tasks);
+            return appendSavingWarning("OK, I've marked this task as not done yet:\n  " + task);
+        } else if (isCommand(command, "delete")) {
+            Task task = deleteTask(command, tasks);
+            String response = "Noted. I've removed this task:\n  " + task
+                    + "\nNow you have " + formatTaskCount(tasks.size()) + " in the list.";
+            return appendSavingWarning(response);
+        } else if (isCommand(command, "todo")) {
+            return addTask(createTodo(command));
+        } else if (isCommand(command, "deadline")) {
+            return addTask(createDeadline(command));
+        } else if (isCommand(command, "event")) {
+            return addTask(createEvent(command));
+        }
+        throw new TonyException("I don't recognize that command. "
+                + "Try todo, deadline, event, list, find, mark, unmark, delete, or bye.");
     }
 
     /**
