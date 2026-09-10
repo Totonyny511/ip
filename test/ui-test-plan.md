@@ -1,5 +1,79 @@
 # UI test plan
 
+## Test case: Delete multiple tasks atomically
+
+**Aim:** Verifies that one command deletes several original task positions in list order and that a duplicate
+selection rejects the entire command.
+
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/Tony.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
+
+**Inputs:**
+```text
+todo read book
+deadline submit report /by 2026-09-20
+event orientation /from 2026-09-21 /to 2026-09-22
+todo buy groceries
+delete 4 2
+list
+delete 1 1
+list
+bye
+```
+
+**Expected output:**
+```text
+ _____   ___   _   _ __   __
+|_   _| / _ \ | \ | |\ \ / /
+  | |  | | | ||  \| | \ V /
+  | |  | |_| || |\  |  | |
+  |_|   \___/ |_| \_|  |_|
+________________________________________________
+What can I do for you?
+________________________________________________
+________________________________________________
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 task in the list.
+________________________________________________
+________________________________________________
+Got it. I've added this task:
+  [D][ ] submit report (by: Sep 20 2026)
+Now you have 2 tasks in the list.
+________________________________________________
+________________________________________________
+Got it. I've added this task:
+  [E][ ] orientation (from: Sep 21 2026 to: Sep 22 2026)
+Now you have 3 tasks in the list.
+________________________________________________
+________________________________________________
+Got it. I've added this task:
+  [T][ ] buy groceries
+Now you have 4 tasks in the list.
+________________________________________________
+________________________________________________
+Noted. I've removed these tasks:
+  [D][ ] submit report (by: Sep 20 2026)
+  [T][ ] buy groceries
+Now you have 2 tasks in the list.
+________________________________________________
+________________________________________________
+Here are the tasks in your list:
+1.[T][ ] read book
+2.[E][ ] orientation (from: Sep 21 2026 to: Sep 22 2026)
+________________________________________________
+________________________________________________
+Oops: Please provide each task number only once.
+________________________________________________
+________________________________________________
+Here are the tasks in your list:
+1.[T][ ] read book
+2.[E][ ] orientation (from: Sep 21 2026 to: Sep 22 2026)
+________________________________________________
+________________________________________________
+Bye. Hope to see you again soon!
+________________________________________________
+```
+
 ## Test case: Add and list all task types
 
 **Aim:** Verifies that to-dos, deadlines, and events are stored and displayed with their type, status, and formatted dates.

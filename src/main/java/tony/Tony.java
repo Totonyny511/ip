@@ -5,6 +5,10 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import tony.exception.TonyException;
 import tony.storage.Storage;
@@ -142,9 +146,8 @@ public class Tony {
             Task task = unmarkTask(command, tasks);
             return appendSavingWarning("OK, I've marked this task as not done yet:\n  " + task);
         } else if (isCommand(command, "delete")) {
-            Task task = deleteTask(command, tasks);
-            String response = "Noted. I've removed this task:\n  " + task
-                    + "\nNow you have " + formatTaskCount(tasks.size()) + " in the list.";
+            List<Task> deletedTasks = deleteTasks(command, tasks);
+            String response = formatDeletedTasks(deletedTasks, tasks.size());
             return appendSavingWarning(response);
         } else if (isCommand(command, "todo")) {
             return addTask(createTodo(command));
@@ -197,10 +200,10 @@ public class Tony {
         return tasks.unmark(taskIndex);
     }
 
-    /** Removes the one-based task number supplied in a {@code delete} command. */
-    private static Task deleteTask(String command, TaskList tasks) throws TonyException {
-        int taskIndex = getTaskIndex(command, "delete", tasks.size());
-        return tasks.delete(taskIndex);
+    /** Removes the one-based task numbers supplied in a {@code delete} command. */
+    private static List<Task> deleteTasks(String command, TaskList tasks) throws TonyException {
+        List<Integer> taskIndexes = getTaskIndexes(command, "delete", tasks.size());
+        return tasks.deleteTasks(taskIndexes);
     }
 
     /** Finds tasks whose descriptions contain the keyword in a {@code find} command. */
@@ -291,6 +294,58 @@ public class Tony {
         } catch (NumberFormatException exception) {
             throw new TonyException("Please provide a whole-number task number to " + commandWord + ".");
         }
+    }
+
+    /** Parses and checks the task numbers supplied to a multi-item command. */
+    private static List<Integer> getTaskIndexes(String command, String commandWord, int numberOfTasks)
+            throws TonyException {
+        assert isCommand(command, commandWord) : "The command must match the operation being parsed";
+        assert numberOfTasks >= 0 : "A task list cannot have a negative size";
+
+        String numberText = command.substring(commandWord.length()).trim();
+        if (numberText.isEmpty()) {
+            throw new TonyException("Please provide a task number to " + commandWord + ".");
+        }
+
+        ArrayList<Integer> taskIndexes = new ArrayList<>();
+        Set<Integer> uniqueTaskIndexes = new HashSet<>();
+        for (String numberToken : numberText.split("\\s+")) {
+            int taskIndex;
+            try {
+                taskIndex = Integer.parseInt(numberToken) - 1;
+            } catch (NumberFormatException exception) {
+                throw new TonyException("Please provide a whole-number task number to " + commandWord + ".");
+            }
+
+            if (taskIndex < 0 || taskIndex >= numberOfTasks) {
+                throw new TonyException("That task number is not in your list.");
+            }
+            if (!uniqueTaskIndexes.add(taskIndex)) {
+                throw new TonyException("Please provide each task number only once.");
+            }
+            taskIndexes.add(taskIndex);
+        }
+        return taskIndexes;
+    }
+
+    /** Formats the confirmation for one or more deleted tasks. */
+    private static String formatDeletedTasks(List<Task> deletedTasks, int remainingTaskCount) {
+        assert deletedTasks != null : "A deletion response must contain deleted tasks";
+        assert !deletedTasks.isEmpty() : "A deletion response requires at least one deleted task";
+
+        if (deletedTasks.size() == 1) {
+            return "Noted. I've removed this task:\n  " + deletedTasks.get(0)
+                    + "\nNow you have " + formatTaskCount(remainingTaskCount) + " in the list.";
+        }
+
+        StringBuilder response = new StringBuilder("Noted. I've removed these tasks:");
+        for (Task deletedTask : deletedTasks) {
+            response.append("\n  ").append(deletedTask);
+        }
+        return response.append("\nNow you have ")
+                .append(formatTaskCount(remainingTaskCount))
+                .append(" in the list.")
+                .toString();
     }
 
     /** Formats a heading and tasks as a numbered, multi-line response. */

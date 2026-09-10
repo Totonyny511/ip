@@ -51,6 +51,34 @@ public class TaskList {
     }
 
     /**
+     * Removes and returns the tasks at the supplied zero-based indexes.
+     * Returned tasks follow their original list order, regardless of the order of the indexes.
+     *
+     * @param taskIndexes distinct zero-based indexes of tasks to remove.
+     * @return the removed tasks in their original list order.
+     */
+    public List<Task> deleteTasks(List<Integer> taskIndexes) {
+        assert taskIndexes != null : "Task indexes to delete must not be null";
+        assert taskIndexes.stream().noneMatch(Objects::isNull) : "Task indexes to delete must not contain null";
+        assert taskIndexes.stream().distinct().count() == taskIndexes.size()
+                : "Task indexes to delete must be distinct";
+        assert taskIndexes.stream().allMatch(index -> index >= 0 && index < tasks.size())
+                : "Task indexes to delete must refer to existing tasks";
+
+        ArrayList<Integer> sortedTaskIndexes = new ArrayList<>(taskIndexes);
+        sortedTaskIndexes.sort(Integer::compareTo);
+
+        ArrayList<Task> deletedTasks = new ArrayList<>();
+        for (int taskIndex : sortedTaskIndexes) {
+            deletedTasks.add(tasks.get(taskIndex));
+        }
+        for (int index = sortedTaskIndexes.size() - 1; index >= 0; index--) {
+            tasks.remove((int) sortedTaskIndexes.get(index));
+        }
+        return List.copyOf(deletedTasks);
+    }
+
+    /**
      * Marks the task at a zero-based index as complete.
      *
      * @param taskIndex zero-based index of the task to mark.

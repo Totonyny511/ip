@@ -74,6 +74,21 @@ public class TaskListTest {
         assertEquals(List.of(firstTask, lastTask), taskList.getTasks());
     }
 
+    /** Verifies that bulk deletion uses original indexes and returns tasks in original list order. */
+    @Test
+    public void deleteTasks_unorderedIndexes_deletesAndReturnsTasksInOriginalOrder() {
+        Todo firstTask = new Todo("first task");
+        Todo secondTask = new Todo("second task");
+        Todo thirdTask = new Todo("third task");
+        Todo fourthTask = new Todo("fourth task");
+        TaskList taskList = new TaskList(List.of(firstTask, secondTask, thirdTask, fourthTask));
+
+        List<Task> deletedTasks = taskList.deleteTasks(List.of(3, 1));
+
+        assertEquals(List.of(secondTask, fourthTask), deletedTasks);
+        assertEquals(List.of(firstTask, thirdTask), taskList.getTasks());
+    }
+
     /** Verifies that marking a task completes and returns the selected task. */
     @Test
     public void mark_validIndex_marksAndReturnsSelectedTask() {
