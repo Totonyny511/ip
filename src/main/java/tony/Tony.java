@@ -116,6 +116,8 @@ public class Tony {
      * @return Tony's reply for the command.
      */
     public String getResponse(String command) {
+        assert command != null : "A command read from the UI must not be null";
+
         if (isExitCommand(command)) {
             return "Bye. Hope to see you again soon!";
         }
@@ -264,6 +266,9 @@ public class Tony {
     /** Parses and checks the task number supplied to a list-changing command. */
     private static int getTaskIndex(String command, String commandWord, int numberOfTasks)
             throws TonyException {
+        assert isCommand(command, commandWord) : "The command must match the operation being parsed";
+        assert numberOfTasks >= 0 : "A task list cannot have a negative size";
+
         try {
             String numberText = command.substring(commandWord.length()).trim();
             if (numberText.isEmpty()) {
@@ -275,6 +280,8 @@ public class Tony {
             if (taskIndex < 0 || taskIndex >= numberOfTasks) {
                 throw new TonyException("That task number is not in your list.");
             }
+            assert taskIndex >= 0 && taskIndex < numberOfTasks
+                    : "A validated task index must refer to an existing task";
             return taskIndex;
         } catch (NumberFormatException exception) {
             throw new TonyException("Please provide a whole-number task number to " + commandWord + ".");
@@ -295,11 +302,13 @@ public class Tony {
 
     /** Formats a task count with the appropriate singular or plural noun. */
     private static String formatTaskCount(int taskCount) {
+        assert taskCount >= 0 : "A task count cannot be negative";
         return taskCount + (taskCount == 1 ? " task" : " tasks");
     }
 
     /** Formats a warning for invalid data lines skipped during startup. */
     private static String formatSkippedDataLines(int lineCount) {
+        assert lineCount > 0 : "A skipped-lines warning requires at least one skipped line";
         String formattedCount = lineCount + (lineCount == 1 ? " line" : " lines");
         return "Warning: I skipped " + formattedCount
                 + " in the data file because they were invalid.";

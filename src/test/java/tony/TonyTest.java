@@ -1,6 +1,7 @@
 package tony;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,6 +17,16 @@ import org.junit.jupiter.api.io.TempDir;
 public class TonyTest {
     @TempDir
     private Path temporaryDirectory;
+
+    /** Verifies the UI contract that command processing receives a non-null line. */
+    @Test
+    public void getResponse_nullCommand_throwsAssertionError() {
+        Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
+
+        AssertionError error = assertThrows(AssertionError.class, () -> tony.getResponse(null));
+
+        assertEquals("A command read from the UI must not be null", error.getMessage());
+    }
 
     /** Verifies that core task commands update and display the same task list. */
     @Test

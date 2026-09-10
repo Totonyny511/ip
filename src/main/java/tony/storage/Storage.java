@@ -31,6 +31,8 @@ public class Storage {
         private final int skippedLineCount;
 
         private LoadResult(ArrayList<Task> tasks, int skippedLineCount) {
+            assert tasks != null : "A load result must contain a task collection";
+            assert skippedLineCount >= 0 : "A skipped-line count cannot be negative";
             this.tasks = tasks;
             this.skippedLineCount = skippedLineCount;
         }
@@ -112,6 +114,8 @@ public class Storage {
         if (fields.size() != expectedFieldCount) {
             throw new IllegalArgumentException("Wrong number of task fields");
         }
+        assert taskType.equals("T") || taskType.equals("D") || taskType.equals("E")
+                : "The task type must have been validated before reconstruction";
 
         String status = getRequiredField(fields, 1);
         if (!status.equals("0") && !status.equals("1")) {
