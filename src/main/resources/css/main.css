@@ -237,15 +237,3 @@
     -fx-background-radius: 6;
     -fx-padding: 7 9 7 9;
 }
-
-.new-response-button {
-    -fx-background-color: #172554;
-    -fx-background-radius: 16;
-    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.20), 8, 0, 0, 2);
-    -fx-font-size: 12px;
-    -fx-padding: 7 12 7 12;
-}
-
-.new-response-button:hover {
-    -fx-background-color: #1e3a8a;
-}

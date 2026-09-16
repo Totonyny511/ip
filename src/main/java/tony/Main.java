@@ -43,9 +43,6 @@ public class Main extends Application {
     /** Scrolls through the conversation while keeping the composer visible. */
     private final ScrollPane conversationScroll = new ScrollPane(dialogContainer);
 
-    /** Offers a way to reach a new response without interrupting someone reading earlier messages. */
-    private final Button newResponseButton = new Button("New response  ↓");
-
     /** Displays the current total number of tasks. */
     private final Label totalTaskCount = new Label("0");
 
@@ -162,7 +159,7 @@ public class Main extends Application {
         overviewMessage.setAccessibleText("Secretary's note: " + tony.getOverviewMessage());
     }
 
-    /** Creates the scrollable conversation area and its unobtrusive new-response control. */
+    /** Creates the scrollable conversation area. */
     private StackPane createConversation() {
         dialogContainer.setPadding(new Insets(16));
         dialogContainer.setSpacing(8);
@@ -173,16 +170,8 @@ public class Main extends Application {
         conversationScroll.getStyleClass().add("conversation-scroll");
         conversationScroll.widthProperty().addListener((observable, oldWidth, newWidth) ->
                 updateConversationPadding(newWidth.doubleValue()));
-        conversationScroll.vvalueProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.doubleValue() >= 0.95) {
-                newResponseButton.setVisible(false);
-            }
-        });
-
-        newResponseButton.getStyleClass().add("new-response-button");
-        newResponseButton.setVisible(false);
-        newResponseButton.managedProperty().bind(newResponseButton.visibleProperty());
-        newResponseButton.setOnAction(event -> scrollToLatestResponse());
+        dialogContainer.heightProperty().addListener((observable, oldHeight, newHeight) ->
+                Platform.runLater(this::scrollToLatestResponse));
 
         Region officeBackground = new Region();
         officeBackground.setMouseTransparent(true);
@@ -192,11 +181,7 @@ public class Main extends Application {
         backgroundWash.setMouseTransparent(true);
         backgroundWash.getStyleClass().add("conversation-background-wash");
 
-        StackPane conversation = new StackPane(
-                officeBackground, backgroundWash, conversationScroll, newResponseButton);
-        StackPane.setAlignment(newResponseButton, Pos.BOTTOM_CENTER);
-        StackPane.setMargin(newResponseButton, new Insets(0, 0, 12, 0));
-        return conversation;
+        return new StackPane(officeBackground, backgroundWash, conversationScroll);
     }
 
     /** Uses compact gutters when the window is narrow. */
@@ -293,10 +278,10 @@ public class Main extends Application {
     /** Displays the opening prompt and any storage warning. */
     private void showWelcomeMessage() {
         addDialog(DialogBox.getTonyDialog(
-                "Good day, Chief. What shall I arrange for you?", Tony.ResponseType.NORMAL), true);
+                "Good day, Chief. What shall I arrange for you?", Tony.ResponseType.NORMAL));
         if (!tony.getStartupMessage().isEmpty()) {
             addDialog(DialogBox.getTonyDialog(
-                    tony.getStartupMessage(), Tony.ResponseType.WARNING), true);
+                    tony.getStartupMessage(), Tony.ResponseType.WARNING));
         }
     }
 
@@ -314,15 +299,9 @@ public class Main extends Application {
     private void submitCommand(String command, boolean isTypedCommand) {
         Tony.CommandResult result = tony.getCommandResult(command);
         updateTaskSummary();
-        boolean shouldScroll = isViewingLatestResponse();
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(command),
                 DialogBox.getTonyDialog(result.message(), result.type()));
-        if (shouldScroll) {
-            Platform.runLater(this::scrollToLatestResponse);
-        } else {
-            newResponseButton.setVisible(true);
-        }
 
         if (isTypedCommand && result.type() == Tony.ResponseType.ERROR) {
             userInput.selectAll();
@@ -342,24 +321,13 @@ public class Main extends Application {
         }
     }
 
-    /** Adds one dialog and optionally scrolls it into view after layout completes. */
-    private void addDialog(DialogBox dialog, boolean shouldScroll) {
+    /** Adds one dialog to the conversation. */
+    private void addDialog(DialogBox dialog) {
         dialogContainer.getChildren().add(dialog);
-        if (shouldScroll) {
-            Platform.runLater(this::scrollToLatestResponse);
-        }
     }
 
-    /** Returns whether adding a response should keep the bottom of the conversation visible. */
-    private boolean isViewingLatestResponse() {
-        boolean contentFitsViewport = dialogContainer.getHeight()
-                <= conversationScroll.getViewportBounds().getHeight() + 1;
-        return contentFitsViewport || conversationScroll.getVvalue() >= 0.95;
-    }
-
-    /** Scrolls to the newest response and hides the notification control. */
+    /** Scrolls to the newest response. */
     private void scrollToLatestResponse() {
-        conversationScroll.setVvalue(1.0);
-        newResponseButton.setVisible(false);
+        conversationScroll.setVvalue(conversationScroll.getVmax());
     }
 }

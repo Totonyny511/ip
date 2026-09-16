@@ -12,8 +12,9 @@ Record the operating system, display scaling, screen resolution, and OS display 
 1. Start at the default window size and enter enough commands to require scrolling.
 2. Resize to the minimum 360 x 440 window size.
 3. Resize to at least 1920 x 1080 and maximize the window.
-4. At each size, verify that messages wrap without clipping, the composer remains visible, buttons remain reachable,
-   and the newest response can be reached using the new-response control.
+4. At each size, scroll to an earlier message and submit another command.
+5. Verify that messages wrap without clipping, the composer remains visible, buttons remain reachable, and the
+   conversation automatically scrolls to its absolute bottom so Tony's complete newest response is visible.
 
 ## Test case: Display scaling and screen resolution
 
