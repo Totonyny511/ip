@@ -23,6 +23,22 @@ import tony.ui.Ui;
  * Processes commands for the Tony chatbot and stores the user's tasks.
  */
 public class Tony {
+    /** Visual meaning of a response returned to a graphical interface. */
+    public enum ResponseType {
+        NORMAL,
+        WARNING,
+        ERROR
+    }
+
+    /**
+     * Contains a response message and the visual meaning an interface should give it.
+     *
+     * @param message response text to display.
+     * @param type visual meaning of the response.
+     */
+    public record CommandResult(String message, ResponseType type) {
+    }
+
     /** Default location of the task data file. */
     private static final Path DEFAULT_DATA_FILE = Path.of("./data/tony.txt");
 
@@ -114,22 +130,58 @@ public class Tony {
     }
 
     /**
+     * Returns the number of tasks currently managed by Tony.
+     *
+     * @return the total number of tasks.
+     */
+    public int getTaskCount() {
+        return tasks.size();
+    }
+
+    /**
+     * Returns the number of tasks currently marked as complete.
+     *
+     * @return the number of completed tasks.
+     */
+    public int getCompletedTaskCount() {
+        return tasks.countCompletedTasks();
+    }
+
+    /**
      * Executes one user command and returns Tony's complete reply.
      *
      * @param command complete command entered by the user.
      * @return Tony's reply for the command.
      */
     public String getResponse(String command) {
+        CommandResult result = getCommandResult(command);
+        if (result.type() == ResponseType.ERROR) {
+            return "Oops: " + result.message();
+        }
+        return result.message();
+    }
+
+    /**
+     * Executes one user command and returns its text together with its visual meaning.
+     *
+     * @param command complete command entered by the user.
+     * @return the command result for a graphical interface.
+     */
+    public CommandResult getCommandResult(String command) {
         assert command != null : "A command read from the UI must not be null";
 
         if (isExitCommand(command)) {
-            return "Bye. Hope to see you again soon!";
+            return new CommandResult("Bye. Hope to see you again soon!", ResponseType.NORMAL);
         }
 
         try {
-            return executeCommand(command);
+            String response = executeCommand(command);
+            ResponseType responseType = response.endsWith(SAVING_ERROR_MESSAGE)
+                    ? ResponseType.WARNING
+                    : ResponseType.NORMAL;
+            return new CommandResult(response, responseType);
         } catch (TonyException exception) {
-            return "Oops: " + exception.getMessage();
+            return new CommandResult(exception.getMessage(), ResponseType.ERROR);
         }
     }
 

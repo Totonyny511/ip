@@ -116,6 +116,19 @@ public class TaskListTest {
         assertEquals(" ", selectedTask.getStatusIcon());
     }
 
+    /** Verifies that the completed count reflects marking and unmarking tasks. */
+    @Test
+    public void countCompletedTasks_mixedTaskStates_returnsCompletedCount() {
+        Todo completedTask = new Todo("completed task");
+        completedTask.markAsDone();
+        TaskList taskList = new TaskList(List.of(completedTask, new Todo("incomplete task")));
+
+        assertEquals(1, taskList.countCompletedTasks());
+
+        taskList.unmark(0);
+        assertEquals(0, taskList.countCompletedTasks());
+    }
+
     /** Verifies that callers cannot modify the returned task snapshot. */
     @Test
     public void find_keywordWithDifferentCase_returnsMatchingDescriptionsInOriginalOrder() {

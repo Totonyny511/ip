@@ -142,6 +142,21 @@ public class TaskList {
     }
 
     /**
+     * Returns how many tasks have been completed.
+     *
+     * @return the number of completed tasks.
+     */
+    public int countCompletedTasks() {
+        int completedTaskCount = 0;
+        for (Task task : tasks) {
+            if (task.isDone()) {
+                completedTaskCount++;
+            }
+        }
+        return completedTaskCount;
+    }
+
+    /**
      * Returns an immutable snapshot for saving the current tasks.
      *
      * @return a snapshot of the tasks in list order.

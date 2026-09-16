@@ -34,6 +34,15 @@ public abstract class Task {
         return isDone ? "X" : " ";
     }
 
+    /**
+     * Returns whether this task has been completed.
+     *
+     * @return whether the task is complete.
+     */
+    public boolean isDone() {
+        return isDone;
+    }
+
     /** Marks this task as complete. */
     public void markAsDone() {
         isDone = true;

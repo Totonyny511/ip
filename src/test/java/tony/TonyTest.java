@@ -120,6 +120,50 @@ public class TonyTest {
         assertEquals("Here are the tasks in your list:", tony.getResponse("list"));
     }
 
+    /** Verifies that graphical interfaces receive error meaning separately from error wording. */
+    @Test
+    public void getCommandResult_invalidCommand_returnsTypedErrorWithoutConsolePrefix() {
+        Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
+
+        Tony.CommandResult result = tony.getCommandResult("todo");
+
+        assertEquals(Tony.ResponseType.ERROR, result.type());
+        assertEquals("A to-do needs a description. For example: todo read chapter 3", result.message());
+    }
+
+    /** Verifies that graphical interfaces receive normal response meaning for successful commands. */
+    @Test
+    public void getCommandResult_validCommand_returnsNormalResponse() {
+        Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
+
+        Tony.CommandResult result = tony.getCommandResult("todo read book");
+
+        assertEquals(Tony.ResponseType.NORMAL, result.type());
+        assertEquals("Got it. I've added this task:\n"
+                + "  [T][ ] read book\n"
+                + "Now you have 1 task in the list.", result.message());
+    }
+
+    /** Verifies that task-summary counts follow task additions, completion, and deletion. */
+    @Test
+    public void taskCounts_taskWorkflow_returnsCurrentTotals() {
+        Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
+
+        assertEquals(0, tony.getTaskCount());
+        assertEquals(0, tony.getCompletedTaskCount());
+
+        tony.getResponse("todo first task");
+        tony.getResponse("todo second task");
+        tony.getResponse("mark 2");
+
+        assertEquals(2, tony.getTaskCount());
+        assertEquals(1, tony.getCompletedTaskCount());
+
+        tony.getResponse("delete 2");
+        assertEquals(1, tony.getTaskCount());
+        assertEquals(0, tony.getCompletedTaskCount());
+    }
+
     /** Verifies that a new chatbot instance loads tasks saved by an earlier instance. */
     @Test
     public void constructor_savedTasksExist_restoresTasks() {
