@@ -28,7 +28,7 @@ public class Ui {
     public void showWelcome() {
         System.out.println(BANNER);
         showLine();
-        System.out.println("What can I do for you?");
+        System.out.println("Good day, Chief. What shall I arrange for you?");
         showLine();
     }
 

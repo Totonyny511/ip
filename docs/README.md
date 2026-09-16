@@ -31,10 +31,10 @@ For example:
 `delete 2 4`
 
 ```text
-Noted. I've removed these tasks:
+As requested, Chief. I've removed these matters:
   [D][X] submit report (by: Sep 20 2026)
   [T][ ] buy groceries
-Now you have 2 tasks in the list.
+The agenda now contains 2 tasks.
 ```
 
 The numbers may be entered in any order. Tony displays the removed tasks in their original list order. Every number

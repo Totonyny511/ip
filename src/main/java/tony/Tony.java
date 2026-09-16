@@ -47,11 +47,11 @@ public class Tony {
 
     /** Message displayed when Tony cannot read its data file. */
     private static final String LOADING_ERROR_MESSAGE =
-            "Warning: I couldn't read the data file. Starting with an empty task list.";
+            "Chief, I couldn't read our records, so I have opened a fresh agenda for this session.";
 
     /** Message displayed when Tony cannot save the current tasks. */
     private static final String SAVING_ERROR_MESSAGE =
-            "Warning: I couldn't save your tasks. Your latest changes are only in this session.";
+            "Chief, I couldn't file that change. It will remain available only for this session.";
 
     /** Stores tasks between application sessions. */
     private final Storage storage;
@@ -148,17 +148,33 @@ public class Tony {
     }
 
     /**
+     * Returns the secretary's short assessment of the chief's current workload.
+     *
+     * @return a workload-sensitive sentence for the task overview.
+     */
+    public String getOverviewMessage() {
+        int totalTaskCount = tasks.size();
+        int incompleteTaskCount = totalTaskCount - tasks.countCompletedTasks();
+        if (totalTaskCount == 0) {
+            return "Your desk is clear, Chief. I am ready when you are.";
+        } else if (incompleteTaskCount == 0) {
+            return "Everything is in order, Chief. Shall we call it a day and have a drink?";
+        } else if (incompleteTaskCount >= 5) {
+            return "The agenda is rather full, Chief. Please remember to take a proper rest.";
+        } else if (incompleteTaskCount == 1) {
+            return "One matter awaits your attention, Chief. I will keep it on our radar.";
+        }
+        return incompleteTaskCount + " matters await your attention, Chief. I will keep them in order.";
+    }
+
+    /**
      * Executes one user command and returns Tony's complete reply.
      *
      * @param command complete command entered by the user.
      * @return Tony's reply for the command.
      */
     public String getResponse(String command) {
-        CommandResult result = getCommandResult(command);
-        if (result.type() == ResponseType.ERROR) {
-            return "Oops: " + result.message();
-        }
-        return result.message();
+        return getCommandResult(command).message();
     }
 
     /**
@@ -171,7 +187,8 @@ public class Tony {
         assert command != null : "A command read from the UI must not be null";
 
         if (isExitCommand(command)) {
-            return new CommandResult("Bye. Hope to see you again soon!", ResponseType.NORMAL);
+            return new CommandResult(
+                    "The office is in order, Chief. Enjoy your evening.", ResponseType.NORMAL);
         }
 
         try {
@@ -181,34 +198,41 @@ public class Tony {
                     : ResponseType.NORMAL;
             return new CommandResult(response, responseType);
         } catch (TonyException exception) {
-            return new CommandResult(exception.getMessage(), ResponseType.ERROR);
+            return new CommandResult("My apologies, Chief. " + exception.getMessage(), ResponseType.ERROR);
         }
     }
 
     /** Executes a recognized non-exit command and formats its successful response. */
     private String executeCommand(String command) throws TonyException {
         if (command.equals("list")) {
-            return formatTasks("Here are the tasks in your list:", tasks);
+            return formatTasks("Here is the current agenda, Chief:",
+                    "Your agenda is clear, Chief. There are no matters on file.", tasks);
         } else if (isCommand(command, "find")) {
-            return formatTasks("Here are the matching tasks in your list:", findTasks(command, tasks));
+            return formatTasks("I found these matching matters, Chief:",
+                    "I found no matching matters, Chief.", findTasks(command, tasks));
         } else if (isCommand(command, "mark")) {
             Task task = markTask(command, tasks);
-            return appendSavingWarning("Nice! I've marked this task as done:\n  " + task);
+            return appendSavingWarning(
+                    "Excellent, Chief. I've recorded this matter as complete:\n  " + task);
         } else if (isCommand(command, "unmark")) {
             Task task = unmarkTask(command, tasks);
-            return appendSavingWarning("OK, I've marked this task as not done yet:\n  " + task);
+            return appendSavingWarning(
+                    "Understood, Chief. I've returned this matter to the active agenda:\n  " + task);
         } else if (isCommand(command, "delete")) {
             List<Task> deletedTasks = deleteTasks(command, tasks);
             String response = formatDeletedTasks(deletedTasks, tasks.size());
             return appendSavingWarning(response);
         } else if (isCommand(command, "todo")) {
-            return addTask(createTodo(command));
+            return addTask(createTodo(command),
+                    "Certainly, Chief. I've added this item to the agenda:");
         } else if (isCommand(command, "deadline")) {
-            return addTask(createDeadline(command));
+            return addTask(createDeadline(command),
+                    "Consider it scheduled, Chief. I'll keep watch over this deadline:");
         } else if (isCommand(command, "event")) {
-            return addTask(createEvent(command));
+            return addTask(createEvent(command),
+                    "Your calendar is updated, Chief. I've arranged this event:");
         }
-        throw new TonyException("I don't recognize that command. "
+        throw new TonyException("I don't recognize that instruction. "
                 + "Try todo, deadline, event, list, find, mark, unmark, delete, or bye.");
     }
 
@@ -223,10 +247,10 @@ public class Tony {
     }
 
     /** Stores a task and returns a confirmation with the updated task count. */
-    private String addTask(Task task) {
+    private String addTask(Task task, String confirmation) {
         tasks.add(task);
-        String response = "Got it. I've added this task:\n  " + task
-                + "\nNow you have " + formatTaskCount(tasks.size()) + " in the list.";
+        String response = confirmation + "\n  " + task
+                + "\nThe agenda now contains " + formatTaskCount(tasks.size()) + ".";
         return appendSavingWarning(response);
     }
 
@@ -262,7 +286,7 @@ public class Tony {
     private static TaskList findTasks(String command, TaskList tasks) throws TonyException {
         String keyword = command.substring("find".length()).trim();
         if (keyword.isEmpty()) {
-            throw new TonyException("Please provide a keyword to find.");
+            throw new TonyException("Please give me a keyword to search for.");
         }
         return tasks.find(keyword);
     }
@@ -276,7 +300,8 @@ public class Tony {
     private static Todo createTodo(String command) throws TonyException {
         String description = command.substring("todo".length()).trim();
         if (description.isEmpty()) {
-            throw new TonyException("A to-do needs a description. For example: todo read chapter 3");
+            throw new TonyException(
+                    "I need a description for the to-do. For example: todo read chapter 3");
         }
         return new Todo(description);
     }
@@ -286,7 +311,7 @@ public class Tony {
         String details = command.substring("deadline".length()).trim();
         int byMarker = details.indexOf(" /by ");
         if (byMarker <= 0 || byMarker + " /by ".length() >= details.length()) {
-            throw new TonyException("A deadline needs a description and a due date. "
+            throw new TonyException("I need a description and due date for the deadline. "
                     + "Use: deadline <task> /by <yyyy-MM-dd>");
         }
         LocalDate dueDate = parseDate(details.substring(byMarker + " /by ".length()).trim());
@@ -302,14 +327,14 @@ public class Tony {
                 : details.indexOf(" /to ", fromMarker + " /from ".length());
         if (fromMarker <= 0 || toMarker <= fromMarker + " /from ".length()
                 || toMarker + " /to ".length() >= details.length()) {
-            throw new TonyException("An event needs a description, start date, and end date. "
+            throw new TonyException("I need a description, start date, and end date for the event. "
                     + "Use: event <task> /from <yyyy-MM-dd> /to <yyyy-MM-dd>");
         }
         LocalDate startDate = parseDate(
                 details.substring(fromMarker + " /from ".length(), toMarker).trim());
         LocalDate endDate = parseDate(details.substring(toMarker + " /to ".length()).trim());
         if (endDate.isBefore(startDate)) {
-            throw new TonyException("An event's end date cannot be before its start date.");
+            throw new TonyException("I cannot schedule an event to end before it begins.");
         }
         return new Event(details.substring(0, fromMarker).trim(), startDate, endDate);
     }
@@ -319,7 +344,7 @@ public class Tony {
         try {
             return LocalDate.parse(dateText, INPUT_DATE_FORMAT);
         } catch (DateTimeParseException exception) {
-            throw new TonyException("Please enter dates as yyyy-MM-dd (for example, 2019-10-15).");
+            throw new TonyException("Please give me dates as yyyy-MM-dd, for example 2019-10-15.");
         }
     }
 
@@ -332,19 +357,19 @@ public class Tony {
         try {
             String numberText = command.substring(commandWord.length()).trim();
             if (numberText.isEmpty()) {
-                throw new TonyException("Please provide a task number to " + commandWord + ".");
+                throw new TonyException("Please give me a task number to " + commandWord + ".");
             }
             int taskNumber = Integer.parseInt(numberText);
             int taskIndex = taskNumber - 1;
 
             if (taskIndex < 0 || taskIndex >= numberOfTasks) {
-                throw new TonyException("That task number is not in your list.");
+                throw new TonyException("That task number is not on the agenda.");
             }
             assert taskIndex >= 0 && taskIndex < numberOfTasks
                     : "A validated task index must refer to an existing task";
             return taskIndex;
         } catch (NumberFormatException exception) {
-            throw new TonyException("Please provide a whole-number task number to " + commandWord + ".");
+            throw new TonyException("Please give me a whole-number task number to " + commandWord + ".");
         }
     }
 
@@ -356,7 +381,7 @@ public class Tony {
 
         String numberText = command.substring(commandWord.length()).trim();
         if (numberText.isEmpty()) {
-            throw new TonyException("Please provide a task number to " + commandWord + ".");
+            throw new TonyException("Please give me a task number to " + commandWord + ".");
         }
 
         ArrayList<Integer> taskIndexes = new ArrayList<>();
@@ -366,14 +391,14 @@ public class Tony {
             try {
                 taskIndex = Integer.parseInt(numberToken) - 1;
             } catch (NumberFormatException exception) {
-                throw new TonyException("Please provide a whole-number task number to " + commandWord + ".");
+                throw new TonyException("Please give me a whole-number task number to " + commandWord + ".");
             }
 
             if (taskIndex < 0 || taskIndex >= numberOfTasks) {
-                throw new TonyException("That task number is not in your list.");
+                throw new TonyException("That task number is not on the agenda.");
             }
             if (!uniqueTaskIndexes.add(taskIndex)) {
-                throw new TonyException("Please provide each task number only once.");
+                throw new TonyException("Please give me each task number only once.");
             }
             taskIndexes.add(taskIndex);
         }
@@ -386,22 +411,26 @@ public class Tony {
         assert !deletedTasks.isEmpty() : "A deletion response requires at least one deleted task";
 
         if (deletedTasks.size() == 1) {
-            return "Noted. I've removed this task:\n  " + deletedTasks.get(0)
-                    + "\nNow you have " + formatTaskCount(remainingTaskCount) + " in the list.";
+            return "As requested, Chief. I've removed this matter:\n  " + deletedTasks.get(0)
+                    + "\nThe agenda now contains " + formatTaskCount(remainingTaskCount) + ".";
         }
 
-        StringBuilder response = new StringBuilder("Noted. I've removed these tasks:");
+        StringBuilder response = new StringBuilder(
+                "As requested, Chief. I've removed these matters:");
         for (Task deletedTask : deletedTasks) {
             response.append("\n  ").append(deletedTask);
         }
-        return response.append("\nNow you have ")
+        return response.append("\nThe agenda now contains ")
                 .append(formatTaskCount(remainingTaskCount))
-                .append(" in the list.")
+                .append('.')
                 .toString();
     }
 
     /** Formats a heading and tasks as a numbered, multi-line response. */
-    private static String formatTasks(String heading, TaskList tasks) {
+    private static String formatTasks(String heading, String emptyMessage, TaskList tasks) {
+        if (tasks.size() == 0) {
+            return emptyMessage;
+        }
         StringBuilder response = new StringBuilder(heading);
         for (int index = 0; index < tasks.size(); index++) {
             response.append('\n')
@@ -422,7 +451,7 @@ public class Tony {
     private static String formatSkippedDataLines(int lineCount) {
         assert lineCount > 0 : "A skipped-lines warning requires at least one skipped line";
         String formattedCount = lineCount + (lineCount == 1 ? " line" : " lines");
-        return "Warning: I skipped " + formattedCount
-                + " in the data file because they were invalid.";
+        return "Chief, I set aside " + formattedCount
+                + " from our records because the data was invalid.";
     }
 }

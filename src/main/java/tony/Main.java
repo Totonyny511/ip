@@ -52,6 +52,9 @@ public class Main extends Application {
     /** Displays how many tasks are currently complete. */
     private final Label completedTaskCount = new Label("0");
 
+    /** Displays the secretary's workload-sensitive note to the chief. */
+    private final Label overviewMessage = new Label();
+
     /** Accepts commands from the user. */
     private final TextField userInput = new TextField();
 
@@ -105,7 +108,7 @@ public class Main extends Application {
         Label title = new Label("Tony");
         title.getStyleClass().add("app-title");
 
-        Label subtitle = new Label("Your deputy is always ready, chief 🫡");
+        Label subtitle = new Label("Your secretary is at your service, Chief.");
         subtitle.getStyleClass().add("app-subtitle");
 
         VBox identity = new VBox(0, title, subtitle);
@@ -117,7 +120,7 @@ public class Main extends Application {
     }
 
     /** Creates a compact overview of total and completed tasks above the conversation. */
-    private HBox createTaskSummary() {
+    private VBox createTaskSummary() {
         VBox totalTasks = createSummaryItem("Total tasks", totalTaskCount);
         VBox completedTasks = createSummaryItem("Done", completedTaskCount);
         HBox.setHgrow(totalTasks, Priority.ALWAYS);
@@ -125,8 +128,13 @@ public class Main extends Application {
 
         HBox taskSummary = new HBox(10, totalTasks, completedTasks);
         taskSummary.getStyleClass().add("task-summary");
+        overviewMessage.setWrapText(true);
+        overviewMessage.getStyleClass().add("overview-message");
+
+        VBox overview = new VBox(7, taskSummary, overviewMessage);
+        overview.getStyleClass().add("task-overview");
         updateTaskSummary();
-        return taskSummary;
+        return overview;
     }
 
     /** Creates one equally sized statistic displayed in the task overview. */
@@ -148,8 +156,10 @@ public class Main extends Application {
         int completedTasks = tony.getCompletedTaskCount();
         totalTaskCount.setText(Integer.toString(totalTasks));
         completedTaskCount.setText(Integer.toString(completedTasks));
+        overviewMessage.setText(tony.getOverviewMessage());
         totalTaskCount.setAccessibleText(totalTasks + " total tasks");
         completedTaskCount.setAccessibleText(completedTasks + " completed tasks");
+        overviewMessage.setAccessibleText("Secretary's note: " + tony.getOverviewMessage());
     }
 
     /** Creates the scrollable conversation area and its unobtrusive new-response control. */
@@ -235,8 +245,8 @@ public class Main extends Application {
     /** Opens a concise reference showing every supported command and its required format. */
     private void showCommandHelp() {
         Dialog<Void> helpDialog = new Dialog<>();
-        helpDialog.setTitle("Tony command help");
-        helpDialog.setHeaderText("Available commands");
+        helpDialog.setTitle("Tony's command reference");
+        helpDialog.setHeaderText("Your command reference, Chief");
         helpDialog.initOwner(helpButton.getScene().getWindow());
         helpDialog.setResizable(true);
 
@@ -282,7 +292,8 @@ public class Main extends Application {
 
     /** Displays the opening prompt and any storage warning. */
     private void showWelcomeMessage() {
-        addDialog(DialogBox.getTonyDialog("What can I do for you?", Tony.ResponseType.NORMAL), true);
+        addDialog(DialogBox.getTonyDialog(
+                "Good day, Chief. What shall I arrange for you?", Tony.ResponseType.NORMAL), true);
         if (!tony.getStartupMessage().isEmpty()) {
             addDialog(DialogBox.getTonyDialog(
                     tony.getStartupMessage(), Tony.ResponseType.WARNING), true);

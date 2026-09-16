@@ -28,49 +28,49 @@ bye
   | |  | |_| || |\  |  | |
   |_|   \___/ |_| \_|  |_|
 ________________________________________________
-What can I do for you?
+Good day, Chief. What shall I arrange for you?
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Certainly, Chief. I've added this item to the agenda:
   [T][ ] read book
-Now you have 1 task in the list.
+The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Consider it scheduled, Chief. I'll keep watch over this deadline:
   [D][ ] submit report (by: Sep 20 2026)
-Now you have 2 tasks in the list.
+The agenda now contains 2 tasks.
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Your calendar is updated, Chief. I've arranged this event:
   [E][ ] orientation (from: Sep 21 2026 to: Sep 22 2026)
-Now you have 3 tasks in the list.
+The agenda now contains 3 tasks.
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Certainly, Chief. I've added this item to the agenda:
   [T][ ] buy groceries
-Now you have 4 tasks in the list.
+The agenda now contains 4 tasks.
 ________________________________________________
 ________________________________________________
-Noted. I've removed these tasks:
+As requested, Chief. I've removed these matters:
   [D][ ] submit report (by: Sep 20 2026)
   [T][ ] buy groceries
-Now you have 2 tasks in the list.
+The agenda now contains 2 tasks.
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[T][ ] read book
 2.[E][ ] orientation (from: Sep 21 2026 to: Sep 22 2026)
 ________________________________________________
 ________________________________________________
-Oops: Please provide each task number only once.
+My apologies, Chief. Please give me each task number only once.
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[T][ ] read book
 2.[E][ ] orientation (from: Sep 21 2026 to: Sep 22 2026)
 ________________________________________________
 ________________________________________________
-Bye. Hope to see you again soon!
+The office is in order, Chief. Enjoy your evening.
 ________________________________________________
 ```
 
@@ -98,35 +98,35 @@ bye
   | |  | |_| || |\  |  | |
   |_|   \___/ |_| \_|  |_|
 ________________________________________________
-What can I do for you?
+Good day, Chief. What shall I arrange for you?
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Certainly, Chief. I've added this item to the agenda:
   [T][ ] borrow book
-Now you have 1 task in the list.
+The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Consider it scheduled, Chief. I'll keep watch over this deadline:
   [D][ ] return book (by: Oct 15 2019)
-Now you have 2 tasks in the list.
+The agenda now contains 2 tasks.
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Your calendar is updated, Chief. I've arranged this event:
   [E][ ] project meeting (from: Oct 16 2019 to: Oct 17 2019)
-Now you have 3 tasks in the list.
+The agenda now contains 3 tasks.
 ________________________________________________
 ________________________________________________
-Nice! I've marked this task as done:
+Excellent, Chief. I've recorded this matter as complete:
   [T][X] borrow book
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[T][X] borrow book
 2.[D][ ] return book (by: Oct 15 2019)
 3.[E][ ] project meeting (from: Oct 16 2019 to: Oct 17 2019)
 ________________________________________________
 ________________________________________________
-Bye. Hope to see you again soon!
+The office is in order, Chief. Enjoy your evening.
 ________________________________________________
 ```
 
@@ -158,47 +158,47 @@ bye
   | |  | |_| || |\  |  | |
   |_|   \___/ |_| \_|  |_|
 ________________________________________________
-What can I do for you?
+Good day, Chief. What shall I arrange for you?
 ________________________________________________
 ________________________________________________
-Oops: A to-do needs a description. For example: todo read chapter 3
+My apologies, Chief. I need a description for the to-do. For example: todo read chapter 3
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Certainly, Chief. I've added this item to the agenda:
   [T][ ] write report
-Now you have 1 task in the list.
+The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
-Oops: A deadline needs a description and a due date. Use: deadline <task> /by <yyyy-MM-dd>
+My apologies, Chief. I need a description and due date for the deadline. Use: deadline <task> /by <yyyy-MM-dd>
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[T][ ] write report
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Consider it scheduled, Chief. I'll keep watch over this deadline:
   [D][ ] submit form (by: Oct 18 2019)
-Now you have 2 tasks in the list.
+The agenda now contains 2 tasks.
 ________________________________________________
 ________________________________________________
-Oops: An event needs a description, start date, and end date. Use: event <task> /from <yyyy-MM-dd> /to <yyyy-MM-dd>
+My apologies, Chief. I need a description, start date, and end date for the event. Use: event <task> /from <yyyy-MM-dd> /to <yyyy-MM-dd>
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Your calendar is updated, Chief. I've arranged this event:
   [E][ ] standup (from: Oct 19 2019 to: Oct 20 2019)
-Now you have 3 tasks in the list.
+The agenda now contains 3 tasks.
 ________________________________________________
 ________________________________________________
-Oops: I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, or bye.
+My apologies, Chief. I don't recognize that instruction. Try todo, deadline, event, list, find, mark, unmark, delete, or bye.
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[T][ ] write report
 2.[D][ ] submit form (by: Oct 18 2019)
 3.[E][ ] standup (from: Oct 19 2019 to: Oct 20 2019)
 ________________________________________________
 ________________________________________________
-Bye. Hope to see you again soon!
+The office is in order, Chief. Enjoy your evening.
 ________________________________________________
 ```
 
@@ -230,48 +230,48 @@ bye
   | |  | |_| || |\  |  | |
   |_|   \___/ |_| \_|  |_|
 ________________________________________________
-What can I do for you?
+Good day, Chief. What shall I arrange for you?
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Certainly, Chief. I've added this item to the agenda:
   [T][ ] Read Book
-Now you have 1 task in the list.
+The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Consider it scheduled, Chief. I'll keep watch over this deadline:
   [D][ ] return book (by: Jun 06 2019)
-Now you have 2 tasks in the list.
+The agenda now contains 2 tasks.
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Certainly, Chief. I've added this item to the agenda:
   [T][ ] write report
-Now you have 3 tasks in the list.
+The agenda now contains 3 tasks.
 ________________________________________________
 ________________________________________________
-Nice! I've marked this task as done:
+Excellent, Chief. I've recorded this matter as complete:
   [T][X] Read Book
 ________________________________________________
 ________________________________________________
-Nice! I've marked this task as done:
+Excellent, Chief. I've recorded this matter as complete:
   [D][X] return book (by: Jun 06 2019)
 ________________________________________________
 ________________________________________________
-Here are the matching tasks in your list:
+I found these matching matters, Chief:
 1.[T][X] Read Book
 2.[D][X] return book (by: Jun 06 2019)
 ________________________________________________
 ________________________________________________
-Here are the matching tasks in your list:
+I found these matching matters, Chief:
 1.[T][ ] write report
 ________________________________________________
 ________________________________________________
-Here are the matching tasks in your list:
+I found no matching matters, Chief.
 ________________________________________________
 ________________________________________________
-Oops: Please provide a keyword to find.
+My apologies, Chief. Please give me a keyword to search for.
 ________________________________________________
 ________________________________________________
-Bye. Hope to see you again soon!
+The office is in order, Chief. Enjoy your evening.
 ________________________________________________
 ```
 
@@ -302,47 +302,47 @@ bye
   | |  | |_| || |\  |  | |
   |_|   \___/ |_| \_|  |_|
 ________________________________________________
-What can I do for you?
+Good day, Chief. What shall I arrange for you?
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Certainly, Chief. I've added this item to the agenda:
   [T][ ] read book
-Now you have 1 task in the list.
+The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Consider it scheduled, Chief. I'll keep watch over this deadline:
   [D][ ] return book (by: Jun 06 2019)
-Now you have 2 tasks in the list.
+The agenda now contains 2 tasks.
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Your calendar is updated, Chief. I've arranged this event:
   [E][ ] project meeting (from: Aug 06 2019 to: Aug 07 2019)
-Now you have 3 tasks in the list.
+The agenda now contains 3 tasks.
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Certainly, Chief. I've added this item to the agenda:
   [T][ ] borrow book
-Now you have 4 tasks in the list.
+The agenda now contains 4 tasks.
 ________________________________________________
 ________________________________________________
-Noted. I've removed this task:
+As requested, Chief. I've removed this matter:
   [E][ ] project meeting (from: Aug 06 2019 to: Aug 07 2019)
-Now you have 3 tasks in the list.
+The agenda now contains 3 tasks.
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[T][ ] read book
 2.[D][ ] return book (by: Jun 06 2019)
 3.[T][ ] borrow book
 ________________________________________________
 ________________________________________________
-Oops: That task number is not in your list.
+My apologies, Chief. That task number is not on the agenda.
 ________________________________________________
 ________________________________________________
-Oops: Please provide a whole-number task number to delete.
+My apologies, Chief. Please give me a whole-number task number to delete.
 ________________________________________________
 ________________________________________________
-Bye. Hope to see you again soon!
+The office is in order, Chief. Enjoy your evening.
 ________________________________________________
 ```
 
@@ -374,42 +374,42 @@ bye
   | |  | |_| || |\  |  | |
   |_|   \___/ |_| \_|  |_|
 ________________________________________________
-What can I do for you?
+Good day, Chief. What shall I arrange for you?
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Your agenda is clear, Chief. There are no matters on file.
 ________________________________________________
 ________________________________________________
-Oops: That task number is not in your list.
+My apologies, Chief. That task number is not on the agenda.
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Certainly, Chief. I've added this item to the agenda:
   [T][ ] revise notes
-Now you have 1 task in the list.
+The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
-Oops: Please provide a task number to delete.
+My apologies, Chief. Please give me a task number to delete.
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[T][ ] revise notes
 ________________________________________________
 ________________________________________________
-Oops: That task number is not in your list.
+My apologies, Chief. That task number is not on the agenda.
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[T][ ] revise notes
 ________________________________________________
 ________________________________________________
-Oops: Please provide a whole-number task number to delete.
+My apologies, Chief. Please give me a whole-number task number to delete.
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[T][ ] revise notes
 ________________________________________________
 ________________________________________________
-Bye. Hope to see you again soon!
+The office is in order, Chief. Enjoy your evening.
 ________________________________________________
 ```
 
@@ -439,41 +439,41 @@ bye
   | |  | |_| || |\  |  | |
   |_|   \___/ |_| \_|  |_|
 ________________________________________________
-What can I do for you?
+Good day, Chief. What shall I arrange for you?
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Certainly, Chief. I've added this item to the agenda:
   [T][ ] read book
-Now you have 1 task in the list.
+The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Consider it scheduled, Chief. I'll keep watch over this deadline:
   [D][ ] return book (by: Jun 06 2019)
-Now you have 2 tasks in the list.
+The agenda now contains 2 tasks.
 ________________________________________________
 ________________________________________________
-Nice! I've marked this task as done:
+Excellent, Chief. I've recorded this matter as complete:
   [T][X] read book
 ________________________________________________
 ________________________________________________
-Noted. I've removed this task:
+As requested, Chief. I've removed this matter:
   [T][X] read book
-Now you have 1 task in the list.
+The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[D][ ] return book (by: Jun 06 2019)
 ________________________________________________
 ________________________________________________
-Noted. I've removed this task:
+As requested, Chief. I've removed this matter:
   [D][ ] return book (by: Jun 06 2019)
-Now you have 0 tasks in the list.
+The agenda now contains 0 tasks.
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Your agenda is clear, Chief. There are no matters on file.
 ________________________________________________
 ________________________________________________
-Bye. Hope to see you again soon!
+The office is in order, Chief. Enjoy your evening.
 ________________________________________________
 ```
 
@@ -505,44 +505,44 @@ bye
   | |  | |_| || |\  |  | |
   |_|   \___/ |_| \_|  |_|
 ________________________________________________
-What can I do for you?
+Good day, Chief. What shall I arrange for you?
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Certainly, Chief. I've added this item to the agenda:
   [T][ ] review notes
-Now you have 1 task in the list.
+The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
-Oops: That task number is not in your list.
+My apologies, Chief. That task number is not on the agenda.
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[T][ ] review notes
 ________________________________________________
 ________________________________________________
-Oops: Please provide a whole-number task number to mark.
+My apologies, Chief. Please give me a whole-number task number to mark.
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[T][ ] review notes
 ________________________________________________
 ________________________________________________
-Oops: That task number is not in your list.
+My apologies, Chief. That task number is not on the agenda.
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[T][ ] review notes
 ________________________________________________
 ________________________________________________
-Nice! I've marked this task as done:
+Excellent, Chief. I've recorded this matter as complete:
   [T][X] review notes
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[T][X] review notes
 ________________________________________________
 ________________________________________________
-Bye. Hope to see you again soon!
+The office is in order, Chief. Enjoy your evening.
 ________________________________________________
 ```
 
@@ -575,48 +575,48 @@ bye
   | |  | |_| || |\  |  | |
   |_|   \___/ |_| \_|  |_|
 ________________________________________________
-What can I do for you?
+Good day, Chief. What shall I arrange for you?
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Certainly, Chief. I've added this item to the agenda:
   [T][ ] submit assignment
-Now you have 1 task in the list.
+The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
-Nice! I've marked this task as done:
+Excellent, Chief. I've recorded this matter as complete:
   [T][X] submit assignment
 ________________________________________________
 ________________________________________________
-Oops: That task number is not in your list.
+My apologies, Chief. That task number is not on the agenda.
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[T][X] submit assignment
 ________________________________________________
 ________________________________________________
-Oops: Please provide a whole-number task number to unmark.
+My apologies, Chief. Please give me a whole-number task number to unmark.
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[T][X] submit assignment
 ________________________________________________
 ________________________________________________
-Oops: That task number is not in your list.
+My apologies, Chief. That task number is not on the agenda.
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[T][X] submit assignment
 ________________________________________________
 ________________________________________________
-OK, I've marked this task as not done yet:
+Understood, Chief. I've returned this matter to the active agenda:
   [T][ ] submit assignment
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[T][ ] submit assignment
 ________________________________________________
 ________________________________________________
-Bye. Hope to see you again soon!
+The office is in order, Chief. Enjoy your evening.
 ________________________________________________
 ```
 
@@ -645,38 +645,38 @@ bye
   | |  | |_| || |\  |  | |
   |_|   \___/ |_| \_|  |_|
 ________________________________________________
-What can I do for you?
+Good day, Chief. What shall I arrange for you?
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Certainly, Chief. I've added this item to the agenda:
   [T][ ] read book
-Now you have 1 task in the list.
+The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Consider it scheduled, Chief. I'll keep watch over this deadline:
   [D][ ] return book (by: Jun 06 2019)
-Now you have 2 tasks in the list.
+The agenda now contains 2 tasks.
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Your calendar is updated, Chief. I've arranged this event:
   [E][ ] project meeting (from: Aug 06 2019 to: Aug 07 2019)
-Now you have 3 tasks in the list.
+The agenda now contains 3 tasks.
 ________________________________________________
 ________________________________________________
-Nice! I've marked this task as done:
+Excellent, Chief. I've recorded this matter as complete:
   [T][X] read book
 ________________________________________________
 ________________________________________________
-OK, I've marked this task as not done yet:
+Understood, Chief. I've returned this matter to the active agenda:
   [T][ ] read book
 ________________________________________________
 ________________________________________________
-Noted. I've removed this task:
+As requested, Chief. I've removed this matter:
   [D][ ] return book (by: Jun 06 2019)
-Now you have 2 tasks in the list.
+The agenda now contains 2 tasks.
 ________________________________________________
 ________________________________________________
-Bye. Hope to see you again soon!
+The office is in order, Chief. Enjoy your evening.
 ________________________________________________
 Saved file:
 T | 0 | read book
@@ -703,16 +703,16 @@ bye
   | |  | |_| || |\  |  | |
   |_|   \___/ |_| \_|  |_|
 ________________________________________________
-What can I do for you?
+Good day, Chief. What shall I arrange for you?
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[T][X] read book
 2.[D][ ] return book (by: Jun 06 2019)
 3.[E][X] project meeting (from: Aug 06 2019 to: Aug 07 2019)
 ________________________________________________
 ________________________________________________
-Bye. Hope to see you again soon!
+The office is in order, Chief. Enjoy your evening.
 ________________________________________________
 ```
 
@@ -736,13 +736,13 @@ bye
   | |  | |_| || |\  |  | |
   |_|   \___/ |_| \_|  |_|
 ________________________________________________
-What can I do for you?
+Good day, Chief. What shall I arrange for you?
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Your agenda is clear, Chief. There are no matters on file.
 ________________________________________________
 ________________________________________________
-Bye. Hope to see you again soon!
+The office is in order, Chief. Enjoy your evening.
 ________________________________________________
 ```
 
@@ -766,16 +766,16 @@ bye
   | |  | |_| || |\  |  | |
   |_|   \___/ |_| \_|  |_|
 ________________________________________________
-What can I do for you?
+Good day, Chief. What shall I arrange for you?
 ________________________________________________
-Warning: I skipped 7 lines in the data file because they were invalid.
+Chief, I set aside 7 lines from our records because the data was invalid.
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[T][X] valid task
 2.[D][ ] return book (by: Oct 18 2019)
 ________________________________________________
 ________________________________________________
-Bye. Hope to see you again soon!
+The office is in order, Chief. Enjoy your evening.
 ________________________________________________
 ```
 
@@ -805,37 +805,37 @@ bye
   | |  | |_| || |\  |  | |
   |_|   \___/ |_| \_|  |_|
 ________________________________________________
-What can I do for you?
+Good day, Chief. What shall I arrange for you?
 ________________________________________________
 ________________________________________________
-Oops: Please enter dates as yyyy-MM-dd (for example, 2019-10-15).
+My apologies, Chief. Please give me dates as yyyy-MM-dd, for example 2019-10-15.
 ________________________________________________
 ________________________________________________
-Oops: Please enter dates as yyyy-MM-dd (for example, 2019-10-15).
+My apologies, Chief. Please give me dates as yyyy-MM-dd, for example 2019-10-15.
 ________________________________________________
 ________________________________________________
-Oops: Please enter dates as yyyy-MM-dd (for example, 2019-10-15).
+My apologies, Chief. Please give me dates as yyyy-MM-dd, for example 2019-10-15.
 ________________________________________________
 ________________________________________________
-Oops: An event's end date cannot be before its start date.
+My apologies, Chief. I cannot schedule an event to end before it begins.
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Consider it scheduled, Chief. I'll keep watch over this deadline:
   [D][ ] valid leap day (by: Feb 29 2020)
-Now you have 1 task in the list.
+The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Your calendar is updated, Chief. I've arranged this event:
   [E][ ] one-day workshop (from: Oct 15 2019 to: Oct 15 2019)
-Now you have 2 tasks in the list.
+The agenda now contains 2 tasks.
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[D][ ] valid leap day (by: Feb 29 2020)
 2.[E][ ] one-day workshop (from: Oct 15 2019 to: Oct 15 2019)
 ________________________________________________
 ________________________________________________
-Bye. Hope to see you again soon!
+The office is in order, Chief. Enjoy your evening.
 ________________________________________________
 ```
 
@@ -860,21 +860,21 @@ bye
   | |  | |_| || |\  |  | |
   |_|   \___/ |_| \_|  |_|
 ________________________________________________
-What can I do for you?
+Good day, Chief. What shall I arrange for you?
 ________________________________________________
-Warning: I couldn't read the data file. Starting with an empty task list.
+Chief, I couldn't read our records, so I have opened a fresh agenda for this session.
 ________________________________________________
-Got it. I've added this task:
+Certainly, Chief. I've added this item to the agenda:
   [T][ ] session-only task
-Now you have 1 task in the list.
-Warning: I couldn't save your tasks. Your latest changes are only in this session.
+The agenda now contains 1 task.
+Chief, I couldn't file that change. It will remain available only for this session.
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[T][ ] session-only task
 ________________________________________________
 ________________________________________________
-Bye. Hope to see you again soon!
+The office is in order, Chief. Enjoy your evening.
 ________________________________________________
 ```
 
@@ -899,20 +899,20 @@ bye
   | |  | |_| || |\  |  | |
   |_|   \___/ |_| \_|  |_|
 ________________________________________________
-What can I do for you?
+Good day, Chief. What shall I arrange for you?
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Certainly, Chief. I've added this item to the agenda:
   [T][ ] compare A | B
-Now you have 1 task in the list.
+The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
-Got it. I've added this task:
+Consider it scheduled, Chief. I'll keep watch over this deadline:
   [D][ ] review C:\notes | archive (by: Oct 18 2019)
-Now you have 2 tasks in the list.
+The agenda now contains 2 tasks.
 ________________________________________________
 ________________________________________________
-Bye. Hope to see you again soon!
+The office is in order, Chief. Enjoy your evening.
 ________________________________________________
 Saved file:
 T | 0 | compare A \| B
@@ -939,14 +939,14 @@ bye
   | |  | |_| || |\  |  | |
   |_|   \___/ |_| \_|  |_|
 ________________________________________________
-What can I do for you?
+Good day, Chief. What shall I arrange for you?
 ________________________________________________
 ________________________________________________
-Here are the tasks in your list:
+Here is the current agenda, Chief:
 1.[T][X] compare A | B
 2.[D][ ] review C:\notes | archive (by: Oct 18 2019)
 ________________________________________________
 ________________________________________________
-Bye. Hope to see you again soon!
+The office is in order, Chief. Enjoy your evening.
 ________________________________________________
 ```

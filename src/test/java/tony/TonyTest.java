@@ -33,23 +33,23 @@ public class TonyTest {
     public void getResponse_taskWorkflow_returnsCurrentTaskState() {
         Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
 
-        assertEquals("Got it. I've added this task:\n"
+        assertEquals("Certainly, Chief. I've added this item to the agenda:\n"
                 + "  [T][ ] read book\n"
-                + "Now you have 1 task in the list.", tony.getResponse("todo read book"));
-        assertEquals("Got it. I've added this task:\n"
+                + "The agenda now contains 1 task.", tony.getResponse("todo read book"));
+        assertEquals("Consider it scheduled, Chief. I'll keep watch over this deadline:\n"
                 + "  [D][ ] submit report (by: Sep 20 2026)\n"
-                + "Now you have 2 tasks in the list.",
+                + "The agenda now contains 2 tasks.",
                 tony.getResponse("deadline submit report /by 2026-09-20"));
-        assertEquals("Nice! I've marked this task as done:\n  [T][X] read book",
+        assertEquals("Excellent, Chief. I've recorded this matter as complete:\n  [T][X] read book",
                 tony.getResponse("mark 1"));
-        assertEquals("Here are the tasks in your list:\n"
+        assertEquals("Here is the current agenda, Chief:\n"
                 + "1.[T][X] read book\n"
                 + "2.[D][ ] submit report (by: Sep 20 2026)", tony.getResponse("list"));
-        assertEquals("Here are the matching tasks in your list:\n"
+        assertEquals("I found these matching matters, Chief:\n"
                 + "1.[D][ ] submit report (by: Sep 20 2026)", tony.getResponse("find REPORT"));
-        assertEquals("Noted. I've removed this task:\n"
+        assertEquals("As requested, Chief. I've removed this matter:\n"
                 + "  [T][X] read book\n"
-                + "Now you have 1 task in the list.", tony.getResponse("delete 1"));
+                + "The agenda now contains 1 task.", tony.getResponse("delete 1"));
     }
 
     /** Verifies that one command deletes several original-list positions and reports them in list order. */
@@ -61,11 +61,11 @@ public class TonyTest {
         tony.getResponse("event orientation /from 2026-09-21 /to 2026-09-22");
         tony.getResponse("todo buy groceries");
 
-        assertEquals("Noted. I've removed these tasks:\n"
+        assertEquals("As requested, Chief. I've removed these matters:\n"
                 + "  [D][ ] submit report (by: Sep 20 2026)\n"
                 + "  [T][ ] buy groceries\n"
-                + "Now you have 2 tasks in the list.", tony.getResponse("delete 4 2"));
-        assertEquals("Here are the tasks in your list:\n"
+                + "The agenda now contains 2 tasks.", tony.getResponse("delete 4 2"));
+        assertEquals("Here is the current agenda, Chief:\n"
                 + "1.[T][ ] read book\n"
                 + "2.[E][ ] orientation (from: Sep 21 2026 to: Sep 22 2026)",
                 tony.getResponse("list"));
@@ -79,11 +79,13 @@ public class TonyTest {
         tony.getResponse("todo second task");
         tony.getResponse("todo third task");
 
-        assertEquals("Oops: Please provide a whole-number task number to delete.",
+        assertEquals("My apologies, Chief. Please give me a whole-number task number to delete.",
                 tony.getResponse("delete 1 two"));
-        assertEquals("Oops: That task number is not in your list.", tony.getResponse("delete 1 4"));
-        assertEquals("Oops: Please provide each task number only once.", tony.getResponse("delete 1 1"));
-        assertEquals("Here are the tasks in your list:\n"
+        assertEquals("My apologies, Chief. That task number is not on the agenda.",
+                tony.getResponse("delete 1 4"));
+        assertEquals("My apologies, Chief. Please give me each task number only once.",
+                tony.getResponse("delete 1 1"));
+        assertEquals("Here is the current agenda, Chief:\n"
                 + "1.[T][ ] first task\n"
                 + "2.[T][ ] second task\n"
                 + "3.[T][ ] third task", tony.getResponse("list"));
@@ -101,7 +103,7 @@ public class TonyTest {
 
         Tony secondSession = new Tony(dataFile);
 
-        assertEquals("Here are the tasks in your list:\n1.[T][ ] second task",
+        assertEquals("Here is the current agenda, Chief:\n1.[T][ ] second task",
                 secondSession.getResponse("list"));
     }
 
@@ -110,25 +112,28 @@ public class TonyTest {
     public void getResponse_invalidCommands_returnsErrorsWithoutChangingTasks() {
         Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
 
-        assertEquals("Oops: A to-do needs a description. For example: todo read chapter 3",
+        assertEquals("My apologies, Chief. I need a description for the to-do. "
+                        + "For example: todo read chapter 3",
                 tony.getResponse("todo"));
-        assertEquals("Oops: Please enter dates as yyyy-MM-dd (for example, 2019-10-15).",
+        assertEquals("My apologies, Chief. Please give me dates as yyyy-MM-dd, for example 2019-10-15.",
                 tony.getResponse("deadline submit report /by tomorrow"));
-        assertEquals("Oops: I don't recognize that command. "
+        assertEquals("My apologies, Chief. I don't recognize that instruction. "
                 + "Try todo, deadline, event, list, find, mark, unmark, delete, or bye.",
                 tony.getResponse("hello"));
-        assertEquals("Here are the tasks in your list:", tony.getResponse("list"));
+        assertEquals("Your agenda is clear, Chief. There are no matters on file.",
+                tony.getResponse("list"));
     }
 
     /** Verifies that graphical interfaces receive error meaning separately from error wording. */
     @Test
-    public void getCommandResult_invalidCommand_returnsTypedErrorWithoutConsolePrefix() {
+    public void getCommandResult_invalidCommand_returnsTypedSecretaryError() {
         Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
 
         Tony.CommandResult result = tony.getCommandResult("todo");
 
         assertEquals(Tony.ResponseType.ERROR, result.type());
-        assertEquals("A to-do needs a description. For example: todo read chapter 3", result.message());
+        assertEquals("My apologies, Chief. I need a description for the to-do. "
+                + "For example: todo read chapter 3", result.message());
     }
 
     /** Verifies that graphical interfaces receive normal response meaning for successful commands. */
@@ -139,9 +144,9 @@ public class TonyTest {
         Tony.CommandResult result = tony.getCommandResult("todo read book");
 
         assertEquals(Tony.ResponseType.NORMAL, result.type());
-        assertEquals("Got it. I've added this task:\n"
+        assertEquals("Certainly, Chief. I've added this item to the agenda:\n"
                 + "  [T][ ] read book\n"
-                + "Now you have 1 task in the list.", result.message());
+                + "The agenda now contains 1 task.", result.message());
     }
 
     /** Verifies that task-summary counts follow task additions, completion, and deletion. */
@@ -164,6 +169,29 @@ public class TonyTest {
         assertEquals(0, tony.getCompletedTaskCount());
     }
 
+    /** Verifies that the compact overview note responds to each meaningful workload state. */
+    @Test
+    public void getOverviewMessage_differentWorkloads_returnsSecretaryAdvice() {
+        Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
+        assertEquals("Your desk is clear, Chief. I am ready when you are.", tony.getOverviewMessage());
+
+        tony.getResponse("todo first task");
+        assertEquals("One matter awaits your attention, Chief. I will keep it on our radar.",
+                tony.getOverviewMessage());
+
+        for (int taskNumber = 2; taskNumber <= 5; taskNumber++) {
+            tony.getResponse("todo task " + taskNumber);
+        }
+        assertEquals("The agenda is rather full, Chief. Please remember to take a proper rest.",
+                tony.getOverviewMessage());
+
+        for (int taskNumber = 1; taskNumber <= 5; taskNumber++) {
+            tony.getResponse("mark " + taskNumber);
+        }
+        assertEquals("Everything is in order, Chief. Shall we call it a day and have a drink?",
+                tony.getOverviewMessage());
+    }
+
     /** Verifies that a new chatbot instance loads tasks saved by an earlier instance. */
     @Test
     public void constructor_savedTasksExist_restoresTasks() {
@@ -174,7 +202,7 @@ public class TonyTest {
         Tony secondSession = new Tony(dataFile);
 
         assertEquals("", secondSession.getStartupMessage());
-        assertEquals("Here are the tasks in your list:\n1.[T][ ] keep this task",
+        assertEquals("Here is the current agenda, Chief:\n1.[T][ ] keep this task",
                 secondSession.getResponse("list"));
     }
 
@@ -186,9 +214,9 @@ public class TonyTest {
 
         Tony tony = new Tony(dataFile);
 
-        assertEquals("Warning: I skipped 1 line in the data file because they were invalid.",
+        assertEquals("Chief, I set aside 1 line from our records because the data was invalid.",
                 tony.getStartupMessage());
-        assertEquals("Here are the tasks in your list:\n1.[T][ ] valid task", tony.getResponse("list"));
+        assertEquals("Here is the current agenda, Chief:\n1.[T][ ] valid task", tony.getResponse("list"));
     }
 
     /** Verifies that the exit command returns Tony's farewell. */
@@ -196,6 +224,6 @@ public class TonyTest {
     public void getResponse_bye_returnsFarewell() {
         Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
 
-        assertEquals("Bye. Hope to see you again soon!", tony.getResponse("bye"));
+        assertEquals("The office is in order, Chief. Enjoy your evening.", tony.getResponse("bye"));
     }
 }
