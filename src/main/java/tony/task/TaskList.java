@@ -41,6 +41,17 @@ public class TaskList {
     }
 
     /**
+     * Returns whether the list already contains a task with the same type and details.
+     *
+     * @param task task whose details should be checked.
+     * @return whether a matching task is already present.
+     */
+    public boolean containsSameDetails(Task task) {
+        assert task != null : "A task to compare must not be null";
+        return tasks.stream().anyMatch(existingTask -> existingTask.hasSameDetails(task));
+    }
+
+    /**
      * Removes and returns the task at a zero-based index.
      *
      * @param taskIndex zero-based index of the task to remove.

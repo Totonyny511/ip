@@ -40,7 +40,7 @@ public class EventTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
                 new Event("Attend orientation", START_DATE, START_DATE.minusDays(1)));
 
-        assertEquals("An event's end date cannot be before its start date", exception.getMessage());
+        assertEquals("An event's end date must be after its start date", exception.getMessage());
     }
 
     /** Verifies that an event does not match a date before it starts. */
@@ -83,12 +83,13 @@ public class EventTest {
         assertFalse(event.isOnDate(END_DATE.plusDays(1)));
     }
 
-    /** Verifies that a single-day event matches its event date. */
+    /** Verifies that an event rejects an end date equal to its start date. */
     @Test
-    public void isOnDate_singleDayEventOnEventDate_returnsTrue() {
-        Event event = new Event("Submit project", START_DATE, START_DATE);
+    public void constructor_sameStartAndEndDate_throwsIllegalArgumentException() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                new Event("Submit project", START_DATE, START_DATE));
 
-        assertTrue(event.isOnDate(START_DATE));
+        assertEquals("An event's end date must be after its start date", exception.getMessage());
     }
 
     /** Verifies that an event does not match a null date. */

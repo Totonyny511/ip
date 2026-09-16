@@ -23,6 +23,9 @@ import tony.ui.Ui;
  * Processes commands for the Tony chatbot and stores the user's tasks.
  */
 public class Tony {
+    /** Maximum accepted command length, protecting the interface from accidental oversized input. */
+    private static final int MAX_COMMAND_LENGTH = 1_000;
+
     /** Visual meaning of a response returned to a graphical interface. */
     public enum ResponseType {
         NORMAL,
@@ -62,6 +65,9 @@ public class Tony {
     /** Optional warning generated while loading the saved tasks. */
     private final String startupMessage;
 
+    /** Whether saving is safe after the latest storage operation. */
+    private boolean isStorageAvailable;
+
     /** Creates Tony using the default task data file. */
     public Tony() {
         this(DEFAULT_DATA_FILE);
@@ -81,12 +87,14 @@ public class Tony {
         try {
             Storage.LoadResult result = storage.load();
             loadedTasks = new TaskList(result.getTasks());
+            isStorageAvailable = true;
             if (result.getSkippedLineCount() > 0) {
                 loadingMessage = formatSkippedDataLines(result.getSkippedLineCount());
             }
-        } catch (IOException exception) {
+        } catch (IOException | SecurityException exception) {
             loadedTasks = new TaskList();
             loadingMessage = LOADING_ERROR_MESSAGE;
+            isStorageAvailable = false;
         }
 
         tasks = loadedTasks;
@@ -184,15 +192,29 @@ public class Tony {
      * @return the command result for a graphical interface.
      */
     public CommandResult getCommandResult(String command) {
-        assert command != null : "A command read from the UI must not be null";
+        if (command == null) {
+            return commandError("Please enter a command.");
+        }
+        if (command.length() > MAX_COMMAND_LENGTH) {
+            return commandError("That instruction is too long. Please keep it under 1,000 characters.");
+        }
+        if (command.codePoints().anyMatch(character ->
+                Character.isISOControl(character) && !Character.isWhitespace(character))) {
+            return commandError("That instruction contains unsupported control characters.");
+        }
 
-        if (isExitCommand(command)) {
+        String normalizedCommand = normalizeCommand(command);
+        if (normalizedCommand.isEmpty()) {
+            return commandError("Please enter a command.");
+        }
+
+        if (isExitCommand(normalizedCommand)) {
             return new CommandResult(
                     "The office is in order, Chief. Enjoy your evening.", ResponseType.NORMAL);
         }
 
         try {
-            String response = executeCommand(command);
+            String response = executeCommand(normalizedCommand);
             ResponseType responseType = response.endsWith(SAVING_ERROR_MESSAGE)
                     ? ResponseType.WARNING
                     : ResponseType.NORMAL;
@@ -243,11 +265,14 @@ public class Tony {
      * @return whether the command is {@code bye}.
      */
     public static boolean isExitCommand(String command) {
-        return command.equals("bye");
+        return command != null && normalizeCommand(command).equals("bye");
     }
 
     /** Stores a task and returns a confirmation with the updated task count. */
-    private String addTask(Task task, String confirmation) {
+    private String addTask(Task task, String confirmation) throws TonyException {
+        if (tasks.containsSameDetails(task)) {
+            throw new TonyException("That matter is already on the agenda.");
+        }
         tasks.add(task);
         String response = confirmation + "\n  " + task
                 + "\nThe agenda now contains " + formatTaskCount(tasks.size()) + ".";
@@ -256,10 +281,14 @@ public class Tony {
 
     /** Saves the current tasks and appends a warning to the reply after a disk error. */
     private String appendSavingWarning(String response) {
+        if (!isStorageAvailable) {
+            return response + "\n" + SAVING_ERROR_MESSAGE;
+        }
         try {
             storage.save(tasks);
             return response;
-        } catch (IOException exception) {
+        } catch (IOException | SecurityException exception) {
+            isStorageAvailable = false;
             return response + "\n" + SAVING_ERROR_MESSAGE;
         }
     }
@@ -267,12 +296,18 @@ public class Tony {
     /** Marks the one-based task number in a {@code mark} command as complete. */
     private static Task markTask(String command, TaskList tasks) throws TonyException {
         int taskIndex = getTaskIndex(command, "mark", tasks.size());
+        if (tasks.get(taskIndex).isDone()) {
+            throw new TonyException("That matter is already marked as complete.");
+        }
         return tasks.mark(taskIndex);
     }
 
     /** Marks the one-based task number in an {@code unmark} command as incomplete. */
     private static Task unmarkTask(String command, TaskList tasks) throws TonyException {
         int taskIndex = getTaskIndex(command, "unmark", tasks.size());
+        if (!tasks.get(taskIndex).isDone()) {
+            throw new TonyException("That matter is already on the active agenda.");
+        }
         return tasks.unmark(taskIndex);
     }
 
@@ -303,24 +338,33 @@ public class Tony {
             throw new TonyException(
                     "I need a description for the to-do. For example: todo read chapter 3");
         }
+        validateDescriptionLength(description);
         return new Todo(description);
     }
 
     /** Creates a deadline after checking its description and {@code /by} value. */
     private static Deadline createDeadline(String command) throws TonyException {
         String details = command.substring("deadline".length()).trim();
+        if (countOccurrences(details, " /by ") > 1) {
+            throw new TonyException("Please specify /by only once.");
+        }
         int byMarker = details.indexOf(" /by ");
         if (byMarker <= 0 || byMarker + " /by ".length() >= details.length()) {
             throw new TonyException("I need a description and due date for the deadline. "
                     + "Use: deadline <task> /by <yyyy-MM-dd>");
         }
+        String description = details.substring(0, byMarker).trim();
+        validateDescriptionLength(description);
         LocalDate dueDate = parseDate(details.substring(byMarker + " /by ".length()).trim());
-        return new Deadline(details.substring(0, byMarker).trim(), dueDate);
+        return new Deadline(description, dueDate);
     }
 
     /** Creates an event after checking its description, start, and end values. */
     private static Event createEvent(String command) throws TonyException {
         String details = command.substring("event".length()).trim();
+        if (countOccurrences(details, " /from ") > 1 || countOccurrences(details, " /to ") > 1) {
+            throw new TonyException("Please specify /from and /to only once each.");
+        }
         int fromMarker = details.indexOf(" /from ");
         int toMarker = fromMarker < 0
                 ? -1
@@ -330,13 +374,43 @@ public class Tony {
             throw new TonyException("I need a description, start date, and end date for the event. "
                     + "Use: event <task> /from <yyyy-MM-dd> /to <yyyy-MM-dd>");
         }
+        String description = details.substring(0, fromMarker).trim();
+        validateDescriptionLength(description);
         LocalDate startDate = parseDate(
                 details.substring(fromMarker + " /from ".length(), toMarker).trim());
         LocalDate endDate = parseDate(details.substring(toMarker + " /to ".length()).trim());
-        if (endDate.isBefore(startDate)) {
-            throw new TonyException("I cannot schedule an event to end before it begins.");
+        if (!endDate.isAfter(startDate)) {
+            throw new TonyException("I need the event's end date to be after its start date.");
         }
-        return new Event(details.substring(0, fromMarker).trim(), startDate, endDate);
+        return new Event(description, startDate, endDate);
+    }
+
+    /** Rejects descriptions that would make commands or stored records unreasonably large. */
+    private static void validateDescriptionLength(String description) throws TonyException {
+        if (description.length() > Task.MAX_DESCRIPTION_LENGTH) {
+            throw new TonyException("Please keep task descriptions to 500 characters or fewer.");
+        }
+    }
+
+    /** Counts non-overlapping occurrences of a command parameter marker. */
+    private static int countOccurrences(String text, String marker) {
+        int count = 0;
+        int searchIndex = 0;
+        while ((searchIndex = text.indexOf(marker, searchIndex)) >= 0) {
+            count++;
+            searchIndex += marker.length();
+        }
+        return count;
+    }
+
+    /** Trims a command and treats any run of whitespace as one separator. */
+    private static String normalizeCommand(String command) {
+        return command.trim().replaceAll("\\s+", " ");
+    }
+
+    /** Creates a consistently worded error result for input rejected before command execution. */
+    private static CommandResult commandError(String message) {
+        return new CommandResult("My apologies, Chief. " + message, ResponseType.ERROR);
     }
 
     /** Parses a date entered in the required ISO format. */

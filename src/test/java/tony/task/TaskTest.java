@@ -9,19 +9,28 @@ import org.junit.jupiter.api.Test;
  * Tests assumptions shared by every task type.
  */
 public class TaskTest {
-    /** Verifies that validated task creation never supplies a null description. */
+    /** Verifies that a null description is rejected even when assertions are disabled. */
     @Test
-    public void constructor_nullDescription_throwsAssertionError() {
-        AssertionError error = assertThrows(AssertionError.class, () -> new Todo(null));
+    public void constructor_nullDescription_throwsIllegalArgumentException() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Todo(null));
 
-        assertEquals("A task description must not be null", error.getMessage());
+        assertEquals("A task description cannot be null", exception.getMessage());
     }
 
-    /** Verifies that validated task creation never supplies a blank description. */
+    /** Verifies that a blank description is rejected even when assertions are disabled. */
     @Test
-    public void constructor_blankDescription_throwsAssertionError() {
-        AssertionError error = assertThrows(AssertionError.class, () -> new Todo("  "));
+    public void constructor_blankDescription_throwsIllegalArgumentException() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Todo("  "));
 
-        assertEquals("A task description must not be blank", error.getMessage());
+        assertEquals("A task description cannot be blank", exception.getMessage());
+    }
+
+    /** Verifies that control characters cannot corrupt the line-based data format. */
+    @Test
+    public void constructor_descriptionWithControlCharacter_throwsIllegalArgumentException() {
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class, () -> new Todo("read\tbook"));
+
+        assertEquals("A task description cannot contain control characters", exception.getMessage());
     }
 }

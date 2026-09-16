@@ -74,6 +74,60 @@ The office is in order, Chief. Enjoy your evening.
 ________________________________________________
 ```
 
+## Test case: Normalize input and reject invalid task data
+
+**Aim:** Verifies that extra whitespace is accepted while duplicate tasks, repeated parameters, impossible dates,
+and event ranges without a later end date are rejected without changing the agenda.
+
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/Tony.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
+
+**Inputs:**
+```text
+  todo   Read   Book
+todo read book
+deadline report /by 2026-02-30
+deadline report /by 2026-09-20 /by 2026-09-21
+event meeting /from 2026-09-20 /to 2026-09-20
+list
+  bye
+```
+
+**Expected output:**
+```text
+ _____   ___   _   _ __   __
+|_   _| / _ \ | \ | |\ \ / /
+  | |  | | | ||  \| | \ V /
+  | |  | |_| || |\  |  | |
+  |_|   \___/ |_| \_|  |_|
+________________________________________________
+Good day, Chief. What shall I arrange for you?
+________________________________________________
+________________________________________________
+Certainly, Chief. I've added this item to the agenda:
+  [T][ ] Read Book
+The agenda now contains 1 task.
+________________________________________________
+________________________________________________
+My apologies, Chief. That matter is already on the agenda.
+________________________________________________
+________________________________________________
+My apologies, Chief. Please give me dates as yyyy-MM-dd, for example 2019-10-15.
+________________________________________________
+________________________________________________
+My apologies, Chief. Please specify /by only once.
+________________________________________________
+________________________________________________
+My apologies, Chief. I need the event's end date to be after its start date.
+________________________________________________
+________________________________________________
+Here is the current agenda, Chief:
+1.[T][ ] Read Book
+________________________________________________
+________________________________________________
+The office is in order, Chief. Enjoy your evening.
+________________________________________________
+```
+
 ## Test case: Add and list all task types
 
 **Aim:** Verifies that to-dos, deadlines, and events are stored and displayed with their type, status, and formatted dates.
@@ -781,7 +835,8 @@ ________________________________________________
 
 ## Test case: Parse valid dates and reject invalid dates
 
-**Aim:** Verifies strict `yyyy-MM-dd` parsing, leap-day support, formatted date display, and rejection of event ranges whose end precedes their start.
+**Aim:** Verifies strict `yyyy-MM-dd` parsing, leap-day support, formatted date display, and rejection of event ranges
+whose end date is not later than their start date.
 
 **Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && : > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/Tony.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
 
@@ -817,7 +872,7 @@ ________________________________________________
 My apologies, Chief. Please give me dates as yyyy-MM-dd, for example 2019-10-15.
 ________________________________________________
 ________________________________________________
-My apologies, Chief. I cannot schedule an event to end before it begins.
+My apologies, Chief. I need the event's end date to be after its start date.
 ________________________________________________
 ________________________________________________
 Consider it scheduled, Chief. I'll keep watch over this deadline:
@@ -825,14 +880,11 @@ Consider it scheduled, Chief. I'll keep watch over this deadline:
 The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
-Your calendar is updated, Chief. I've arranged this event:
-  [E][ ] one-day workshop (from: Oct 15 2019 to: Oct 15 2019)
-The agenda now contains 2 tasks.
+My apologies, Chief. I need the event's end date to be after its start date.
 ________________________________________________
 ________________________________________________
 Here is the current agenda, Chief:
 1.[D][ ] valid leap day (by: Feb 29 2020)
-2.[E][ ] one-day workshop (from: Oct 15 2019 to: Oct 15 2019)
 ________________________________________________
 ________________________________________________
 The office is in order, Chief. Enjoy your evening.

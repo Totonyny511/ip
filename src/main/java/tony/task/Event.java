@@ -30,8 +30,8 @@ public class Event extends Task {
         if (startDate == null || endDate == null) {
             throw new IllegalArgumentException("Event dates cannot be null");
         }
-        if (endDate.isBefore(startDate)) {
-            throw new IllegalArgumentException("An event's end date cannot be before its start date");
+        if (!endDate.isAfter(startDate)) {
+            throw new IllegalArgumentException("An event's end date must be after its start date");
         }
         this.startDate = startDate;
         this.endDate = endDate;
@@ -56,6 +56,19 @@ public class Event extends Task {
     @Override
     public boolean isOnDate(LocalDate date) {
         return date != null && !date.isBefore(startDate) && !date.isAfter(endDate);
+    }
+
+    /**
+     * Returns whether another task is an event with the same description and date range.
+     *
+     * @param other task to compare against.
+     * @return whether the tasks represent the same event.
+     */
+    @Override
+    public boolean hasSameDetails(Task other) {
+        return super.hasSameDetails(other)
+                && startDate.equals(((Event) other).startDate)
+                && endDate.equals(((Event) other).endDate);
     }
 
     /**

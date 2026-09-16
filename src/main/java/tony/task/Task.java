@@ -7,6 +7,9 @@ import java.util.Locale;
  * Represents a task that can be completed or left incomplete.
  */
 public abstract class Task {
+    /** Maximum number of characters allowed in a task description. */
+    public static final int MAX_DESCRIPTION_LENGTH = 500;
+
     /** The text describing what must be done. */
     private final String description;
 
@@ -19,10 +22,33 @@ public abstract class Task {
      * @param description the text describing the task.
      */
     public Task(String description) {
-        assert description != null : "A task description must not be null";
-        assert !description.isBlank() : "A task description must not be blank";
+        if (description == null) {
+            throw new IllegalArgumentException("A task description cannot be null");
+        }
+        if (description.isBlank()) {
+            throw new IllegalArgumentException("A task description cannot be blank");
+        }
+        if (description.length() > MAX_DESCRIPTION_LENGTH) {
+            throw new IllegalArgumentException("A task description is too long");
+        }
+        if (description.codePoints().anyMatch(Character::isISOControl)) {
+            throw new IllegalArgumentException("A task description cannot contain control characters");
+        }
         this.description = description;
         this.isDone = false;
+    }
+
+    /**
+     * Returns whether another task has the same type and user-entered details.
+     * Completion status is deliberately excluded because marking a task does not make it a new task.
+     *
+     * @param other task to compare against.
+     * @return whether the tasks represent the same matter.
+     */
+    public boolean hasSameDetails(Task other) {
+        return other != null
+                && getClass().equals(other.getClass())
+                && description.equalsIgnoreCase(other.description);
     }
 
     /**

@@ -83,6 +83,7 @@ public class StorageTest {
                 "D | 0 | missing date",
                 "D | 0 | impossible date | 2026-02-30",
                 "E | 0 | backwards | 2026-08-12 | 2026-08-10",
+                "E | 0 | same day | 2026-08-12 | 2026-08-12",
                 "E | 0 | too | many | fields | here"));
         Storage storage = new Storage(dataFile);
 
@@ -90,7 +91,25 @@ public class StorageTest {
 
         assertEquals(List.of("T | 0 | valid task"),
                 result.getTasks().stream().map(Task::toDataString).toList());
-        assertEquals(7, result.getSkippedLineCount());
+        assertEquals(8, result.getSkippedLineCount());
+    }
+
+    /** Verifies that duplicate saved tasks are ignored regardless of completion or letter case. */
+    @Test
+    public void load_duplicateTasks_keepsFirstTaskAndCountsDuplicates() throws IOException {
+        Path dataFile = temporaryDirectory.resolve("tasks.txt");
+        Files.write(dataFile, List.of(
+                "T | 1 | Read book",
+                "T | 0 | read book",
+                "D | 0 | submit report | 2026-09-20",
+                "D | 1 | Submit Report | 2026-09-20"));
+        Storage storage = new Storage(dataFile);
+
+        Storage.LoadResult result = storage.load();
+
+        assertEquals(List.of("T | 1 | Read book", "D | 0 | submit report | 2026-09-20"),
+                result.getTasks().stream().map(Task::toDataString).toList());
+        assertEquals(2, result.getSkippedLineCount());
     }
 
     /** Verifies that loading a directory as a data file reports an I/O error. */

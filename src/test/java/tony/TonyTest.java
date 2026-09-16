@@ -1,7 +1,7 @@
 package tony;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,14 +18,12 @@ public class TonyTest {
     @TempDir
     private Path temporaryDirectory;
 
-    /** Verifies the UI contract that command processing receives a non-null line. */
+    /** Verifies that a null command is reported without crashing an API caller. */
     @Test
-    public void getResponse_nullCommand_throwsAssertionError() {
+    public void getResponse_nullCommand_returnsError() {
         Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
 
-        AssertionError error = assertThrows(AssertionError.class, () -> tony.getResponse(null));
-
-        assertEquals("A command read from the UI must not be null", error.getMessage());
+        assertEquals("My apologies, Chief. Please enter a command.", tony.getResponse(null));
     }
 
     /** Verifies that core task commands update and display the same task list. */
@@ -124,6 +122,61 @@ public class TonyTest {
                 tony.getResponse("list"));
     }
 
+    /** Verifies that harmless surrounding and repeated whitespace does not invalidate commands. */
+    @Test
+    public void getResponse_irregularWhitespace_executesNormalizedCommand() {
+        Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
+
+        assertEquals("Certainly, Chief. I've added this item to the agenda:\n"
+                + "  [T][ ] read book\n"
+                + "The agenda now contains 1 task.", tony.getResponse("  todo   read   book  "));
+        assertEquals("Consider it scheduled, Chief. I'll keep watch over this deadline:\n"
+                + "  [D][ ] submit report (by: Sep 20 2026)\n"
+                + "The agenda now contains 2 tasks.",
+                tony.getResponse("deadline submit report   /by   2026-09-20"));
+        assertEquals("The office is in order, Chief. Enjoy your evening.", tony.getResponse("  bye  "));
+    }
+
+    /** Verifies that malformed parameters and impossible dates are rejected without changing data. */
+    @Test
+    public void getResponse_invalidParametersAndDates_returnsSpecificErrors() {
+        Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
+
+        assertEquals("My apologies, Chief. Please specify /by only once.",
+                tony.getResponse("deadline report /by 2026-09-20 /by 2026-09-21"));
+        assertEquals("My apologies, Chief. Please give me dates as yyyy-MM-dd, for example 2019-10-15.",
+                tony.getResponse("deadline report /by 2026-02-30"));
+        assertEquals("My apologies, Chief. I need the event's end date to be after its start date.",
+                tony.getResponse("event meeting /from 2026-09-20 /to 2026-09-20"));
+        assertEquals("My apologies, Chief. I need the event's end date to be after its start date.",
+                tony.getResponse("event meeting /from 2026-09-21 /to 2026-09-20"));
+        assertEquals("Your agenda is clear, Chief. There are no matters on file.", tony.getResponse("list"));
+    }
+
+    /** Verifies that the same task cannot be added twice, including with different letter case. */
+    @Test
+    public void getResponse_duplicateTask_returnsErrorWithoutAddingDuplicate() {
+        Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
+        tony.getResponse("todo Read Book");
+
+        assertEquals("My apologies, Chief. That matter is already on the agenda.",
+                tony.getResponse("todo read book"));
+        assertEquals(1, tony.getTaskCount());
+    }
+
+    /** Verifies that blank, extraneous, and invalid-number commands are handled safely. */
+    @Test
+    public void getResponse_blankAndExtraneousInput_returnsErrors() {
+        Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
+
+        assertEquals("My apologies, Chief. Please enter a command.", tony.getResponse("   "));
+        assertEquals("My apologies, Chief. I don't recognize that instruction. "
+                + "Try todo, deadline, event, list, find, mark, unmark, delete, or bye.",
+                tony.getResponse("list now"));
+        assertEquals("My apologies, Chief. Please give me a whole-number task number to mark.",
+                tony.getResponse("mark 1!"));
+    }
+
     /** Verifies that graphical interfaces receive error meaning separately from error wording. */
     @Test
     public void getCommandResult_invalidCommand_returnsTypedSecretaryError() {
@@ -217,6 +270,53 @@ public class TonyTest {
         assertEquals("Chief, I set aside 1 line from our records because the data was invalid.",
                 tony.getStartupMessage());
         assertEquals("Here is the current agenda, Chief:\n1.[T][ ] valid task", tony.getResponse("list"));
+    }
+
+    /** Verifies that an unreadable data path starts safely with an empty in-memory agenda. */
+    @Test
+    public void constructor_dataFileIsDirectory_warnsAndStartsWithEmptyAgenda() {
+        Tony tony = new Tony(temporaryDirectory);
+
+        assertEquals("Chief, I couldn't read our records, so I have opened a fresh agenda for this session.",
+                tony.getStartupMessage());
+        assertEquals(0, tony.getTaskCount());
+    }
+
+    /** Verifies that a file which failed to load is not overwritten by later session changes. */
+    @Test
+    public void getResponse_dataFileHasInvalidEncoding_warnsAndPreservesOriginalFile() throws IOException {
+        Path dataFile = temporaryDirectory.resolve("tasks.txt");
+        byte[] invalidUtf8 = {(byte) 0xC3, (byte) 0x28};
+        Files.write(dataFile, invalidUtf8);
+        Tony tony = new Tony(dataFile);
+
+        String response = tony.getResponse("todo session-only task");
+
+        assertEquals("Chief, I couldn't read our records, so I have opened a fresh agenda for this session.",
+                tony.getStartupMessage());
+        assertEquals("Certainly, Chief. I've added this item to the agenda:\n"
+                + "  [T][ ] session-only task\n"
+                + "The agenda now contains 1 task.\n"
+                + "Chief, I couldn't file that change. It will remain available only for this session.", response);
+        assertArrayEquals(invalidUtf8, Files.readAllBytes(dataFile));
+    }
+
+    /** Verifies that a save failure is reported while the new task remains usable in the session. */
+    @Test
+    public void getCommandResult_dataParentIsFile_returnsWarningAndKeepsSessionTask() throws IOException {
+        Path parentFile = temporaryDirectory.resolve("not-a-directory");
+        Files.writeString(parentFile, "content");
+        Tony tony = new Tony(parentFile.resolve("tasks.txt"));
+
+        Tony.CommandResult result = tony.getCommandResult("todo prepare notes");
+
+        assertEquals(Tony.ResponseType.WARNING, result.type());
+        assertEquals("Certainly, Chief. I've added this item to the agenda:\n"
+                + "  [T][ ] prepare notes\n"
+                + "The agenda now contains 1 task.\n"
+                + "Chief, I couldn't file that change. It will remain available only for this session.",
+                result.message());
+        assertEquals(1, tony.getTaskCount());
     }
 
     /** Verifies that the exit command returns Tony's farewell. */

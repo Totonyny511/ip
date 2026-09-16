@@ -1,5 +1,6 @@
 package tony.storage;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
@@ -20,6 +21,9 @@ import tony.task.Todo;
  * Loads and saves the current task list using a text file.
  */
 public class Storage {
+    /** Largest data file read automatically, to avoid exhausting memory on a corrupt file. */
+    private static final long MAX_DATA_FILE_SIZE_BYTES = 10 * 1024 * 1024;
+
     /**
      * Contains the valid tasks loaded from disk and the number of invalid lines skipped.
      */
@@ -79,17 +83,30 @@ public class Storage {
      */
     public LoadResult load() throws IOException {
         ArrayList<Task> tasks = new ArrayList<>();
-        if (!Files.exists(filePath)) {
+        if (Files.notExists(filePath)) {
             return new LoadResult(tasks, 0);
+        }
+        if (Files.size(filePath) > MAX_DATA_FILE_SIZE_BYTES) {
+            throw new IOException("Task data file is unexpectedly large");
         }
 
         int skippedLineCount = 0;
-        for (String taskLine : Files.readAllLines(filePath)) {
-            if (!taskLine.isBlank()) {
-                try {
-                    tasks.add(parseTask(taskLine));
-                } catch (IllegalArgumentException exception) {
-                    skippedLineCount++;
+        try (BufferedReader reader = Files.newBufferedReader(filePath)) {
+            String taskLine;
+            while ((taskLine = reader.readLine()) != null) {
+                if (!taskLine.isBlank()) {
+                    try {
+                        Task task = parseTask(taskLine);
+                        boolean isDuplicate = tasks.stream()
+                                .anyMatch(existingTask -> existingTask.hasSameDetails(task));
+                        if (isDuplicate) {
+                            skippedLineCount++;
+                        } else {
+                            tasks.add(task);
+                        }
+                    } catch (IllegalArgumentException exception) {
+                        skippedLineCount++;
+                    }
                 }
             }
         }
