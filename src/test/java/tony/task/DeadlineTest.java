@@ -48,6 +48,17 @@ public class DeadlineTest {
         assertFalse(deadline.isOnDate(null));
     }
 
+    /** Verifies deadline identity includes both description and due date. */
+    @Test
+    public void hasSameDetails_variedDeadlines_comparesDescriptionAndDueDate() {
+        Deadline deadline = new Deadline("Submit Report", DUE_DATE);
+
+        assertTrue(deadline.hasSameDetails(new Deadline("submit report", DUE_DATE)));
+        assertFalse(deadline.hasSameDetails(new Deadline("submit report", DUE_DATE.plusDays(1))));
+        assertFalse(deadline.hasSameDetails(new Deadline("different report", DUE_DATE)));
+        assertFalse(deadline.hasSameDetails(new Todo("Submit Report")));
+    }
+
     /** Verifies the storage format of an incomplete deadline. */
     @Test
     public void toDataString_incompleteDeadline_returnsStorageFormat() {

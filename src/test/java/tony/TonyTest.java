@@ -2,6 +2,8 @@ package tony;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -177,6 +179,156 @@ public class TonyTest {
                 tony.getResponse("mark 1!"));
     }
 
+    /** Verifies that command-size and control-character limits reject unsafe input before parsing. */
+    @Test
+    public void getCommandResult_unsafeInput_returnsTypedErrors() {
+        Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
+
+        Tony.CommandResult longCommandResult = tony.getCommandResult("a".repeat(1_001));
+        Tony.CommandResult controlCharacterResult = tony.getCommandResult("todo read\u0000book");
+
+        assertEquals(Tony.ResponseType.ERROR, longCommandResult.type());
+        assertEquals("My apologies, Chief. That instruction is too long. "
+                + "Please keep it under 1,000 characters.", longCommandResult.message());
+        assertEquals(Tony.ResponseType.ERROR, controlCharacterResult.type());
+        assertEquals("My apologies, Chief. That instruction contains unsupported control characters.",
+                controlCharacterResult.message());
+        assertEquals(0, tony.getTaskCount());
+    }
+
+    /** Verifies that whitespace control characters are normalized as ordinary command separators. */
+    @Test
+    public void getResponse_whitespaceControlCharacters_executesNormalizedCommand() {
+        Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
+
+        assertEquals("Certainly, Chief. I've added this item to the agenda:\n"
+                + "  [T][ ] read book\n"
+                + "The agenda now contains 1 task.", tony.getResponse("todo\tread\nbook"));
+    }
+
+    /** Verifies successful event creation and unmarking, including their persisted state. */
+    @Test
+    public void getResponse_eventAndUnmarkWorkflow_persistsUpdatedTask() {
+        Path dataFile = temporaryDirectory.resolve("tasks.txt");
+        Tony tony = new Tony(dataFile);
+
+        assertEquals("Your calendar is updated, Chief. I've arranged this event:\n"
+                + "  [E][ ] orientation (from: Sep 21 2026 to: Sep 22 2026)\n"
+                + "The agenda now contains 1 task.",
+                tony.getResponse("event orientation /from 2026-09-21 /to 2026-09-22"));
+        tony.getResponse("mark 1");
+        assertEquals("Understood, Chief. I've returned this matter to the active agenda:\n"
+                + "  [E][ ] orientation (from: Sep 21 2026 to: Sep 22 2026)",
+                tony.getResponse("unmark 1"));
+
+        Tony nextSession = new Tony(dataFile);
+        assertEquals(0, nextSession.getCompletedTaskCount());
+        assertEquals("Here is the current agenda, Chief:\n"
+                + "1.[E][ ] orientation (from: Sep 21 2026 to: Sep 22 2026)",
+                nextSession.getResponse("list"));
+    }
+
+    /** Verifies state-dependent errors for repeated mark and unmark operations. */
+    @Test
+    public void getResponse_repeatedCompletionChange_returnsSpecificError() {
+        Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
+        tony.getResponse("todo read book");
+
+        assertEquals("My apologies, Chief. That matter is already on the active agenda.",
+                tony.getResponse("unmark 1"));
+        tony.getResponse("mark 1");
+        assertEquals("My apologies, Chief. That matter is already marked as complete.",
+                tony.getResponse("mark 1"));
+    }
+
+    /** Verifies empty and unsuccessful searches without changing the agenda. */
+    @Test
+    public void getResponse_missingOrUnmatchedFindKeyword_returnsSpecificResponse() {
+        Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
+        tony.getResponse("todo read book");
+
+        assertEquals("My apologies, Chief. Please give me a keyword to search for.",
+                tony.getResponse("find"));
+        assertEquals("I found no matching matters, Chief.", tony.getResponse("find report"));
+        assertEquals(1, tony.getTaskCount());
+    }
+
+    /** Verifies malformed deadline and event layouts report format-specific errors. */
+    @Test
+    public void getResponse_incompleteDatedTaskCommands_returnsFormatErrors() {
+        Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
+        String deadlineError = "My apologies, Chief. I need a description and due date for the deadline. "
+                + "Use: deadline <task> /by <yyyy-MM-dd>";
+        String eventError = "My apologies, Chief. I need a description, start date, and end date for the event. "
+                + "Use: event <task> /from <yyyy-MM-dd> /to <yyyy-MM-dd>";
+
+        assertEquals(deadlineError, tony.getResponse("deadline"));
+        assertEquals(deadlineError, tony.getResponse("deadline report /by"));
+        assertEquals(deadlineError, tony.getResponse("deadline /by 2026-09-20"));
+        assertEquals(eventError, tony.getResponse("event"));
+        assertEquals(eventError, tony.getResponse("event meeting /to 2026-09-22"));
+        assertEquals(eventError, tony.getResponse("event meeting /from 2026-09-21"));
+        assertEquals(eventError, tony.getResponse("event meeting /from /to 2026-09-22"));
+    }
+
+    /** Verifies duplicate event parameters and invalid event dates are rejected. */
+    @Test
+    public void getResponse_invalidEventParameters_returnsSpecificErrors() {
+        Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
+
+        assertEquals("My apologies, Chief. Please specify /from and /to only once each.",
+                tony.getResponse("event meeting /from 2026-09-20 /from 2026-09-21 /to 2026-09-22"));
+        assertEquals("My apologies, Chief. Please specify /from and /to only once each.",
+                tony.getResponse("event meeting /from 2026-09-20 /to 2026-09-21 /to 2026-09-22"));
+        assertEquals("My apologies, Chief. Please give me dates as yyyy-MM-dd, for example 2019-10-15.",
+                tony.getResponse("event meeting /from tomorrow /to 2026-09-22"));
+        assertEquals("My apologies, Chief. Please give me dates as yyyy-MM-dd, for example 2019-10-15.",
+                tony.getResponse("event meeting /from 2026-09-20 /to tomorrow"));
+    }
+
+    /** Verifies descriptions over the supported limit are rejected for every task command. */
+    @Test
+    public void getResponse_overlongTaskDescriptions_returnsErrorWithoutAddingTasks() {
+        Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
+        String description = "a".repeat(501);
+        String expected = "My apologies, Chief. Please keep task descriptions to 500 characters or fewer.";
+
+        assertEquals(expected, tony.getResponse("todo " + description));
+        assertEquals(expected, tony.getResponse("deadline " + description + " /by 2026-09-20"));
+        assertEquals(expected, tony.getResponse(
+                "event " + description + " /from 2026-09-20 /to 2026-09-21"));
+        assertEquals(0, tony.getTaskCount());
+    }
+
+    /** Verifies every invalid task-number shape has a clear response and no side effects. */
+    @Test
+    public void getResponse_invalidTaskNumbers_returnsSpecificErrors() {
+        Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
+        tony.getResponse("todo only task");
+
+        assertEquals("My apologies, Chief. Please give me a task number to mark.",
+                tony.getResponse("mark"));
+        assertEquals("My apologies, Chief. That task number is not on the agenda.",
+                tony.getResponse("mark 0"));
+        assertEquals("My apologies, Chief. That task number is not on the agenda.",
+                tony.getResponse("unmark 2"));
+        assertEquals("My apologies, Chief. Please give me a whole-number task number to mark.",
+                tony.getResponse("mark 999999999999999999999"));
+        assertEquals("My apologies, Chief. Please give me a task number to delete.",
+                tony.getResponse("delete"));
+        assertEquals("My apologies, Chief. That task number is not on the agenda.",
+                tony.getResponse("delete -1"));
+        assertEquals(1, tony.getTaskCount());
+    }
+
+    /** Verifies exit-command recognition handles null, normalized, and unrelated input. */
+    @Test
+    public void isExitCommand_variedInput_recognizesOnlyNormalizedBye() {
+        assertFalse(Tony.isExitCommand(null));
+        assertFalse(Tony.isExitCommand("goodbye"));
+        assertTrue(Tony.isExitCommand("  bye\t"));
+    }
+
     /** Verifies that graphical interfaces receive error meaning separately from error wording. */
     @Test
     public void getCommandResult_invalidCommand_returnsTypedSecretaryError() {
@@ -245,6 +397,17 @@ public class TonyTest {
                 tony.getOverviewMessage());
     }
 
+    /** Verifies the overview's plural wording for a small nontrivial workload. */
+    @Test
+    public void getOverviewMessage_twoIncompleteTasks_returnsPluralAdvice() {
+        Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
+        tony.getResponse("todo first task");
+        tony.getResponse("todo second task");
+
+        assertEquals("2 matters await your attention, Chief. I will keep them in order.",
+                tony.getOverviewMessage());
+    }
+
     /** Verifies that a new chatbot instance loads tasks saved by an earlier instance. */
     @Test
     public void constructor_savedTasksExist_restoresTasks() {
@@ -270,6 +433,18 @@ public class TonyTest {
         assertEquals("Chief, I set aside 1 line from our records because the data was invalid.",
                 tony.getStartupMessage());
         assertEquals("Here is the current agenda, Chief:\n1.[T][ ] valid task", tony.getResponse("list"));
+    }
+
+    /** Verifies that startup warnings use plural wording for multiple invalid records. */
+    @Test
+    public void constructor_multipleMalformedSavedRecords_usesPluralWarning() throws IOException {
+        Path dataFile = temporaryDirectory.resolve("tasks.txt");
+        Files.write(dataFile, List.of("T | 2 | invalid status", "X | 0 | invalid type"));
+
+        Tony tony = new Tony(dataFile);
+
+        assertEquals("Chief, I set aside 2 lines from our records because the data was invalid.",
+                tony.getStartupMessage());
     }
 
     /** Verifies that an unreadable data path starts safely with an empty in-memory agenda. */
@@ -317,6 +492,12 @@ public class TonyTest {
                 + "Chief, I couldn't file that change. It will remain available only for this session.",
                 result.message());
         assertEquals(1, tony.getTaskCount());
+
+        Tony.CommandResult secondResult = tony.getCommandResult("todo another task");
+        assertEquals(Tony.ResponseType.WARNING, secondResult.type());
+        assertTrue(secondResult.message().endsWith(
+                "Chief, I couldn't file that change. It will remain available only for this session."));
+        assertEquals(2, tony.getTaskCount());
     }
 
     /** Verifies that the exit command returns Tony's farewell. */

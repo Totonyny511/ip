@@ -100,6 +100,18 @@ public class EventTest {
         assertFalse(event.isOnDate(null));
     }
 
+    /** Verifies event identity includes its description and both boundary dates. */
+    @Test
+    public void hasSameDetails_variedEvents_comparesDescriptionAndDateRange() {
+        Event event = new Event("Attend Orientation", START_DATE, END_DATE);
+
+        assertTrue(event.hasSameDetails(new Event("attend orientation", START_DATE, END_DATE)));
+        assertFalse(event.hasSameDetails(new Event("different event", START_DATE, END_DATE)));
+        assertFalse(event.hasSameDetails(new Event("Attend Orientation", START_DATE.plusDays(1), END_DATE)));
+        assertFalse(event.hasSameDetails(new Event("Attend Orientation", START_DATE, END_DATE.plusDays(1))));
+        assertFalse(event.hasSameDetails(new Todo("Attend Orientation")));
+    }
+
     /** Verifies the storage format of an incomplete event. */
     @Test
     public void toDataString_incompleteEvent_returnsStorageFormat() {

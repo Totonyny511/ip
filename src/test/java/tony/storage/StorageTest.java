@@ -120,6 +120,32 @@ public class StorageTest {
         assertThrows(IOException.class, storage::load);
     }
 
+    /** Verifies that an unexpectedly large data file is rejected before it is read into memory. */
+    @Test
+    public void load_oversizedFile_throwsIoException() throws IOException {
+        Path dataFile = temporaryDirectory.resolve("tasks.txt");
+        byte[] oversizedData = new byte[10 * 1024 * 1024 + 1];
+        Files.write(dataFile, oversizedData);
+        Storage storage = new Storage(dataFile);
+
+        IOException exception = assertThrows(IOException.class, storage::load);
+
+        assertEquals("Task data file is unexpectedly large", exception.getMessage());
+    }
+
+    /** Verifies that a trailing legacy backslash remains part of the description. */
+    @Test
+    public void load_descriptionEndingInBackslash_preservesBackslash() throws IOException {
+        Path dataFile = temporaryDirectory.resolve("tasks.txt");
+        Files.writeString(dataFile, "T | 0 | review notes\\");
+        Storage storage = new Storage(dataFile);
+
+        Storage.LoadResult result = storage.load();
+
+        assertEquals("[T][ ] review notes\\", result.getTasks().get(0).toString());
+        assertEquals(0, result.getSkippedLineCount());
+    }
+
     /** Verifies that saving creates parent directories and writes all task types. */
     @Test
     public void save_taskList_createsParentDirectoryAndWritesAllTasks() throws IOException {

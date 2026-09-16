@@ -1,8 +1,10 @@
 package tony.task;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,14 @@ import org.junit.jupiter.api.Test;
  * Tests task-list mutation and protection of its internal list structure.
  */
 public class TaskListTest {
+    /** Verifies that constructing from a null collection fails at the class boundary. */
+    @Test
+    public void constructor_nullList_throwsAssertionError() {
+        AssertionError error = assertThrows(AssertionError.class, () -> new TaskList(null));
+
+        assertEquals("The source task collection must not be null", error.getMessage());
+    }
+
     /** Verifies that a task list rejects null elements that would break every list operation. */
     @Test
     public void constructor_nullTask_throwsAssertionError() {
@@ -60,6 +70,25 @@ public class TaskListTest {
         assertEquals("A task list must not contain null tasks", error.getMessage());
     }
 
+    /** Verifies detail lookup finds equivalent tasks and rejects unrelated ones. */
+    @Test
+    public void containsSameDetails_variedTasks_returnsWhetherEquivalentTaskExists() {
+        TaskList taskList = new TaskList(List.of(new Todo("Read Book")));
+
+        assertTrue(taskList.containsSameDetails(new Todo("read book")));
+        assertFalse(taskList.containsSameDetails(new Todo("write report")));
+    }
+
+    /** Verifies detail lookup rejects a null comparison task. */
+    @Test
+    public void containsSameDetails_nullTask_throwsAssertionError() {
+        TaskList taskList = new TaskList();
+
+        AssertionError error = assertThrows(AssertionError.class, () -> taskList.containsSameDetails(null));
+
+        assertEquals("A task to compare must not be null", error.getMessage());
+    }
+
     /** Verifies that deletion removes and returns the selected task. */
     @Test
     public void delete_middleTask_removesAndReturnsTask() {
@@ -87,6 +116,19 @@ public class TaskListTest {
 
         assertEquals(List.of(secondTask, fourthTask), deletedTasks);
         assertEquals(List.of(firstTask, thirdTask), taskList.getTasks());
+    }
+
+    /** Verifies that bulk deletion checks all preconditions before changing the list. */
+    @Test
+    public void deleteTasks_invalidIndexes_throwAssertionErrorWithoutDeletingTasks() {
+        Todo task = new Todo("task");
+        TaskList taskList = new TaskList(List.of(task));
+
+        assertThrows(AssertionError.class, () -> taskList.deleteTasks(null));
+        assertThrows(AssertionError.class, () -> taskList.deleteTasks(java.util.Arrays.asList(0, null)));
+        assertThrows(AssertionError.class, () -> taskList.deleteTasks(List.of(0, 0)));
+        assertThrows(AssertionError.class, () -> taskList.deleteTasks(List.of(1)));
+        assertEquals(List.of(task), taskList.getTasks());
     }
 
     /** Verifies that marking a task completes and returns the selected task. */
@@ -162,6 +204,16 @@ public class TaskListTest {
         AssertionError error = assertThrows(AssertionError.class, () -> taskList.find("  "));
 
         assertEquals("A search keyword must not be blank", error.getMessage());
+    }
+
+    /** Verifies that a null search keyword fails at the class boundary. */
+    @Test
+    public void find_nullKeyword_throwsAssertionError() {
+        TaskList taskList = new TaskList(List.of(new Todo("task")));
+
+        AssertionError error = assertThrows(AssertionError.class, () -> taskList.find(null));
+
+        assertEquals("A search keyword must not be null", error.getMessage());
     }
 
     @Test
