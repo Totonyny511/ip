@@ -1,7 +1,10 @@
 # Tony User Guide
 
-Tony is a desktop task manager that helps you organize to-dos, deadlines, and events through simple text commands.
+Tony is a desktop task assistant that helps you organize to-dos, deadlines, and events through simple text commands.
 Your tasks are saved automatically between sessions.
+
+<img width="969" height="772" alt="Screenshot 2026-09-18 at 20 25 09" src="https://github.com/user-attachments/assets/95f07954-09ed-4832-a7b9-e6b21a4a631c" />
+
 
 ## Quick start
 
