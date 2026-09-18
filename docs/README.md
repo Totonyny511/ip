@@ -5,9 +5,10 @@ Your tasks are saved automatically between sessions.
 
 ## Quick start
 
-1. Launch Tony.
-2. Type a command in the input box.
-3. Press <kbd>Enter</kbd> or select **Send**.
+1. Open the project folder in a terminal.
+2. Run `./gradlew run`.
+3. Type a command in the input box.
+4. Press <kbd>Enter</kbd> or select **Send**.
 
 Use the **List**, **Help**, and **Bye** buttons for quick access to common actions.
 
