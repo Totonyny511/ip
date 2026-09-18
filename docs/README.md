@@ -8,12 +8,15 @@ Your tasks are saved automatically between sessions.
 
 ## Quick start
 
-1. Open the project folder in a terminal.
-2. Run `./gradlew run`.
-3. Type a command in the input box.
-4. Press <kbd>Enter</kbd> or select **Send**.
+1. Install Java 25 if it is not already available on your computer.
+2. Download `tony.jar` from the [latest release](https://github.com/Totonyny511/ip/releases/latest).
+3. Open a terminal in the folder containing the downloaded JAR file.
+4. Run `java -jar tony.jar`.
+5. Type a command in the input box, then press <kbd>Enter</kbd> or select **Send**.
 
 Use the **List**, **Help**, and **Bye** buttons for quick access to common actions.
+
+To run Tony from its source code instead, open the project folder in a terminal and run `./gradlew run`.
 
 ## Command format
 
