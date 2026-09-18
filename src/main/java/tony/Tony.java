@@ -2,6 +2,7 @@ package tony;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -59,6 +60,9 @@ public class Tony {
     /** Stores tasks between application sessions. */
     private final Storage storage;
 
+    /** Supplies the current date for rejecting dated tasks in the past. */
+    private final Clock clock;
+
     /** Tasks available during the current session. */
     private final TaskList tasks;
 
@@ -80,7 +84,19 @@ public class Tony {
      * @param dataFile file used to load and save tasks.
      */
     public Tony(Path dataFile) {
+        this(dataFile, Clock.systemDefaultZone());
+    }
+
+    /**
+     * Creates Tony using a specified data file and clock.
+     * This constructor keeps date-dependent command tests deterministic.
+     *
+     * @param dataFile file used to load and save tasks.
+     * @param clock clock used to determine the current date.
+     */
+    Tony(Path dataFile, Clock clock) {
         storage = new Storage(dataFile);
+        this.clock = clock;
 
         TaskList loadedTasks;
         String loadingMessage = "";
@@ -343,7 +359,7 @@ public class Tony {
     }
 
     /** Creates a deadline after checking its description and {@code /by} value. */
-    private static Deadline createDeadline(String command) throws TonyException {
+    private Deadline createDeadline(String command) throws TonyException {
         String details = command.substring("deadline".length()).trim();
         if (countOccurrences(details, " /by ") > 1) {
             throw new TonyException("Please specify /by only once.");
@@ -356,11 +372,14 @@ public class Tony {
         String description = details.substring(0, byMarker).trim();
         validateDescriptionLength(description);
         LocalDate dueDate = parseDate(details.substring(byMarker + " /by ".length()).trim());
+        if (dueDate.isBefore(LocalDate.now(clock))) {
+            throw new TonyException("I cannot schedule a deadline before today.");
+        }
         return new Deadline(description, dueDate);
     }
 
     /** Creates an event after checking its description, start, and end values. */
-    private static Event createEvent(String command) throws TonyException {
+    private Event createEvent(String command) throws TonyException {
         String details = command.substring("event".length()).trim();
         if (countOccurrences(details, " /from ") > 1 || countOccurrences(details, " /to ") > 1) {
             throw new TonyException("Please specify /from and /to only once each.");
@@ -379,6 +398,10 @@ public class Tony {
         LocalDate startDate = parseDate(
                 details.substring(fromMarker + " /from ".length(), toMarker).trim());
         LocalDate endDate = parseDate(details.substring(toMarker + " /to ".length()).trim());
+        LocalDate today = LocalDate.now(clock);
+        if (startDate.isBefore(today) || endDate.isBefore(today)) {
+            throw new TonyException("I cannot schedule an event before today.");
+        }
         if (!endDate.isAfter(startDate)) {
             throw new TonyException("I need the event's end date to be after its start date.");
         }

@@ -10,8 +10,8 @@ selection rejects the entire command.
 **Inputs:**
 ```text
 todo read book
-deadline submit report /by 2026-09-20
-event orientation /from 2026-09-21 /to 2026-09-22
+deadline submit report /by 2099-09-20
+event orientation /from 2099-09-21 /to 2099-09-22
 todo buy groceries
 delete 4 2
 list
@@ -37,12 +37,12 @@ The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
 Consider it scheduled, Chief. I'll keep watch over this deadline:
-  [D][ ] submit report (by: Sep 20 2026)
+  [D][ ] submit report (by: Sep 20 2099)
 The agenda now contains 2 tasks.
 ________________________________________________
 ________________________________________________
 Your calendar is updated, Chief. I've arranged this event:
-  [E][ ] orientation (from: Sep 21 2026 to: Sep 22 2026)
+  [E][ ] orientation (from: Sep 21 2099 to: Sep 22 2099)
 The agenda now contains 3 tasks.
 ________________________________________________
 ________________________________________________
@@ -52,14 +52,14 @@ The agenda now contains 4 tasks.
 ________________________________________________
 ________________________________________________
 As requested, Chief. I've removed these matters:
-  [D][ ] submit report (by: Sep 20 2026)
+  [D][ ] submit report (by: Sep 20 2099)
   [T][ ] buy groceries
 The agenda now contains 2 tasks.
 ________________________________________________
 ________________________________________________
 Here is the current agenda, Chief:
 1.[T][ ] read book
-2.[E][ ] orientation (from: Sep 21 2026 to: Sep 22 2026)
+2.[E][ ] orientation (from: Sep 21 2099 to: Sep 22 2099)
 ________________________________________________
 ________________________________________________
 My apologies, Chief. Please give me each task number only once.
@@ -67,7 +67,7 @@ ________________________________________________
 ________________________________________________
 Here is the current agenda, Chief:
 1.[T][ ] read book
-2.[E][ ] orientation (from: Sep 21 2026 to: Sep 22 2026)
+2.[E][ ] orientation (from: Sep 21 2099 to: Sep 22 2099)
 ________________________________________________
 ________________________________________________
 The office is in order, Chief. Enjoy your evening.
@@ -85,9 +85,11 @@ and event ranges without a later end date are rejected without changing the agen
 ```text
   todo   Read   Book
 todo read book
-deadline report /by 2026-02-30
-deadline report /by 2026-09-20 /by 2026-09-21
-event meeting /from 2026-09-20 /to 2026-09-20
+deadline report /by 2099-02-30
+deadline report /by 2099-09-20 /by 2099-09-21
+event meeting /from 2099-09-20 /to 2099-09-20
+deadline archived report /by 2000-01-01
+event archived meeting /from 2000-01-01 /to 2099-01-02
 list
   bye
 ```
@@ -120,6 +122,12 @@ ________________________________________________
 My apologies, Chief. I need the event's end date to be after its start date.
 ________________________________________________
 ________________________________________________
+My apologies, Chief. I cannot schedule a deadline before today.
+________________________________________________
+________________________________________________
+My apologies, Chief. I cannot schedule an event before today.
+________________________________________________
+________________________________________________
 Here is the current agenda, Chief:
 1.[T][ ] Read Book
 ________________________________________________
@@ -137,8 +145,8 @@ ________________________________________________
 **Inputs:**
 ```text
 todo borrow book
-deadline return book /by 2019-10-15
-event project meeting /from 2019-10-16 /to 2019-10-17
+deadline return book /by 2099-10-15
+event project meeting /from 2099-10-16 /to 2099-10-17
 mark 1
 list
 bye
@@ -161,12 +169,12 @@ The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
 Consider it scheduled, Chief. I'll keep watch over this deadline:
-  [D][ ] return book (by: Oct 15 2019)
+  [D][ ] return book (by: Oct 15 2099)
 The agenda now contains 2 tasks.
 ________________________________________________
 ________________________________________________
 Your calendar is updated, Chief. I've arranged this event:
-  [E][ ] project meeting (from: Oct 16 2019 to: Oct 17 2019)
+  [E][ ] project meeting (from: Oct 16 2099 to: Oct 17 2099)
 The agenda now contains 3 tasks.
 ________________________________________________
 ________________________________________________
@@ -176,8 +184,8 @@ ________________________________________________
 ________________________________________________
 Here is the current agenda, Chief:
 1.[T][X] borrow book
-2.[D][ ] return book (by: Oct 15 2019)
-3.[E][ ] project meeting (from: Oct 16 2019 to: Oct 17 2019)
+2.[D][ ] return book (by: Oct 15 2099)
+3.[E][ ] project meeting (from: Oct 16 2099 to: Oct 17 2099)
 ________________________________________________
 ________________________________________________
 The office is in order, Chief. Enjoy your evening.
@@ -196,9 +204,9 @@ todo
 todo write report
 deadline
 list
-deadline submit form /by 2019-10-18
+deadline submit form /by 2099-10-18
 event meeting /from 2pm
-event standup /from 2019-10-19 /to 2019-10-20
+event standup /from 2099-10-19 /to 2099-10-20
 blah
 list
 bye
@@ -231,7 +239,7 @@ Here is the current agenda, Chief:
 ________________________________________________
 ________________________________________________
 Consider it scheduled, Chief. I'll keep watch over this deadline:
-  [D][ ] submit form (by: Oct 18 2019)
+  [D][ ] submit form (by: Oct 18 2099)
 The agenda now contains 2 tasks.
 ________________________________________________
 ________________________________________________
@@ -239,7 +247,7 @@ My apologies, Chief. I need a description, start date, and end date for the even
 ________________________________________________
 ________________________________________________
 Your calendar is updated, Chief. I've arranged this event:
-  [E][ ] standup (from: Oct 19 2019 to: Oct 20 2019)
+  [E][ ] standup (from: Oct 19 2099 to: Oct 20 2099)
 The agenda now contains 3 tasks.
 ________________________________________________
 ________________________________________________
@@ -248,8 +256,8 @@ ________________________________________________
 ________________________________________________
 Here is the current agenda, Chief:
 1.[T][ ] write report
-2.[D][ ] submit form (by: Oct 18 2019)
-3.[E][ ] standup (from: Oct 19 2019 to: Oct 20 2019)
+2.[D][ ] submit form (by: Oct 18 2099)
+3.[E][ ] standup (from: Oct 19 2099 to: Oct 20 2099)
 ________________________________________________
 ________________________________________________
 The office is in order, Chief. Enjoy your evening.
@@ -265,7 +273,7 @@ ________________________________________________
 **Inputs:**
 ```text
 todo Read Book
-deadline return book /by 2019-06-06
+deadline return book /by 2099-06-06
 todo write report
 mark 1
 mark 2
@@ -293,7 +301,7 @@ The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
 Consider it scheduled, Chief. I'll keep watch over this deadline:
-  [D][ ] return book (by: Jun 06 2019)
+  [D][ ] return book (by: Jun 06 2099)
 The agenda now contains 2 tasks.
 ________________________________________________
 ________________________________________________
@@ -307,12 +315,12 @@ Excellent, Chief. I've recorded this matter as complete:
 ________________________________________________
 ________________________________________________
 Excellent, Chief. I've recorded this matter as complete:
-  [D][X] return book (by: Jun 06 2019)
+  [D][X] return book (by: Jun 06 2099)
 ________________________________________________
 ________________________________________________
 I found these matching matters, Chief:
 1.[T][X] Read Book
-2.[D][X] return book (by: Jun 06 2019)
+2.[D][X] return book (by: Jun 06 2099)
 ________________________________________________
 ________________________________________________
 I found these matching matters, Chief:
@@ -338,8 +346,8 @@ ________________________________________________
 **Inputs:**
 ```text
 todo read book
-deadline return book /by 2019-06-06
-event project meeting /from 2019-08-06 /to 2019-08-07
+deadline return book /by 2099-06-06
+event project meeting /from 2099-08-06 /to 2099-08-07
 todo borrow book
 delete 3
 list
@@ -365,12 +373,12 @@ The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
 Consider it scheduled, Chief. I'll keep watch over this deadline:
-  [D][ ] return book (by: Jun 06 2019)
+  [D][ ] return book (by: Jun 06 2099)
 The agenda now contains 2 tasks.
 ________________________________________________
 ________________________________________________
 Your calendar is updated, Chief. I've arranged this event:
-  [E][ ] project meeting (from: Aug 06 2019 to: Aug 07 2019)
+  [E][ ] project meeting (from: Aug 06 2099 to: Aug 07 2099)
 The agenda now contains 3 tasks.
 ________________________________________________
 ________________________________________________
@@ -380,13 +388,13 @@ The agenda now contains 4 tasks.
 ________________________________________________
 ________________________________________________
 As requested, Chief. I've removed this matter:
-  [E][ ] project meeting (from: Aug 06 2019 to: Aug 07 2019)
+  [E][ ] project meeting (from: Aug 06 2099 to: Aug 07 2099)
 The agenda now contains 3 tasks.
 ________________________________________________
 ________________________________________________
 Here is the current agenda, Chief:
 1.[T][ ] read book
-2.[D][ ] return book (by: Jun 06 2019)
+2.[D][ ] return book (by: Jun 06 2099)
 3.[T][ ] borrow book
 ________________________________________________
 ________________________________________________
@@ -476,7 +484,7 @@ ________________________________________________
 **Inputs:**
 ```text
 todo read book
-deadline return book /by 2019-06-06
+deadline return book /by 2099-06-06
 mark 1
 delete 1
 list
@@ -502,7 +510,7 @@ The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
 Consider it scheduled, Chief. I'll keep watch over this deadline:
-  [D][ ] return book (by: Jun 06 2019)
+  [D][ ] return book (by: Jun 06 2099)
 The agenda now contains 2 tasks.
 ________________________________________________
 ________________________________________________
@@ -516,11 +524,11 @@ The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
 Here is the current agenda, Chief:
-1.[D][ ] return book (by: Jun 06 2019)
+1.[D][ ] return book (by: Jun 06 2099)
 ________________________________________________
 ________________________________________________
 As requested, Chief. I've removed this matter:
-  [D][ ] return book (by: Jun 06 2019)
+  [D][ ] return book (by: Jun 06 2099)
 The agenda now contains 0 tasks.
 ________________________________________________
 ________________________________________________
@@ -683,8 +691,8 @@ ________________________________________________
 **Inputs:**
 ```text
 todo read book
-deadline return book /by 2019-06-06
-event project meeting /from 2019-08-06 /to 2019-08-07
+deadline return book /by 2099-06-06
+event project meeting /from 2099-08-06 /to 2099-08-07
 mark 1
 unmark 1
 delete 2
@@ -708,12 +716,12 @@ The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
 Consider it scheduled, Chief. I'll keep watch over this deadline:
-  [D][ ] return book (by: Jun 06 2019)
+  [D][ ] return book (by: Jun 06 2099)
 The agenda now contains 2 tasks.
 ________________________________________________
 ________________________________________________
 Your calendar is updated, Chief. I've arranged this event:
-  [E][ ] project meeting (from: Aug 06 2019 to: Aug 07 2019)
+  [E][ ] project meeting (from: Aug 06 2099 to: Aug 07 2099)
 The agenda now contains 3 tasks.
 ________________________________________________
 ________________________________________________
@@ -726,7 +734,7 @@ Understood, Chief. I've returned this matter to the active agenda:
 ________________________________________________
 ________________________________________________
 As requested, Chief. I've removed this matter:
-  [D][ ] return book (by: Jun 06 2019)
+  [D][ ] return book (by: Jun 06 2099)
 The agenda now contains 2 tasks.
 ________________________________________________
 ________________________________________________
@@ -734,14 +742,14 @@ The office is in order, Chief. Enjoy your evening.
 ________________________________________________
 Saved file:
 T | 0 | read book
-E | 0 | project meeting | 2019-08-06 | 2019-08-07
+E | 0 | project meeting | 2099-08-06 | 2099-08-07
 ```
 
 ## Test case: Load saved tasks when the chatbot starts
 
 **Aim:** Verifies that a saved to-do, deadline, and event are reconstructed with their descriptions, date fields, and completion states on startup.
 
-**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && printf "T | 1 | read book\\nD | 0 | return book | 2019-06-06\\nE | 1 | project meeting | 2019-08-06 | 2019-08-07\\n" > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/Tony.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && printf "T | 1 | read book\\nD | 0 | return book | 2099-06-06\\nE | 1 | project meeting | 2099-08-06 | 2099-08-07\\n" > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/Tony.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
 
 **Inputs:**
 ```text
@@ -762,8 +770,8 @@ ________________________________________________
 ________________________________________________
 Here is the current agenda, Chief:
 1.[T][X] read book
-2.[D][ ] return book (by: Jun 06 2019)
-3.[E][X] project meeting (from: Aug 06 2019 to: Aug 07 2019)
+2.[D][ ] return book (by: Jun 06 2099)
+3.[E][X] project meeting (from: Aug 06 2099 to: Aug 07 2099)
 ________________________________________________
 ________________________________________________
 The office is in order, Chief. Enjoy your evening.
@@ -804,7 +812,7 @@ ________________________________________________
 
 **Aim:** Verifies that blank lines are ignored, malformed records are skipped with one warning, and valid records still load.
 
-**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && printf "%s\\n" "T | 1 | valid task" "" "T | 2 | bad status" "X | 0 | unknown type" "D | 0 | missing due date" "E | 0 | too many | start | end | extra" "T | 0 | " "D | 0 | impossible date | 2019-02-30" "E | 0 | backwards | 2019-10-20 | 2019-10-19" "D | 0 | return book | 2019-10-18" > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/Tony.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && printf "%s\\n" "T | 1 | valid task" "" "T | 2 | bad status" "X | 0 | unknown type" "D | 0 | missing due date" "E | 0 | too many | start | end | extra" "T | 0 | " "D | 0 | impossible date | 2099-02-30" "E | 0 | backwards | 2099-10-20 | 2099-10-19" "D | 0 | return book | 2099-10-18" > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/Tony.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
 
 **Inputs:**
 ```text
@@ -826,7 +834,7 @@ Chief, I set aside 7 lines from our records because the data was invalid.
 ________________________________________________
 Here is the current agenda, Chief:
 1.[T][X] valid task
-2.[D][ ] return book (by: Oct 18 2019)
+2.[D][ ] return book (by: Oct 18 2099)
 ________________________________________________
 ________________________________________________
 The office is in order, Chief. Enjoy your evening.
@@ -842,12 +850,12 @@ whose end date is not later than their start date.
 
 **Inputs:**
 ```text
-deadline invalid leap day /by 2019-02-29
+deadline invalid leap day /by 2099-02-29
 deadline wrong format /by 15-10-2019
-event impossible date /from 2019-02-28 /to 2019-02-30
-event backwards /from 2019-10-20 /to 2019-10-19
-deadline valid leap day /by 2020-02-29
-event one-day workshop /from 2019-10-15 /to 2019-10-15
+event impossible date /from 2099-02-28 /to 2099-02-30
+event backwards /from 2099-10-20 /to 2099-10-19
+deadline valid leap day /by 2096-02-29
+event one-day workshop /from 2099-10-15 /to 2099-10-15
 list
 bye
 ```
@@ -876,7 +884,7 @@ My apologies, Chief. I need the event's end date to be after its start date.
 ________________________________________________
 ________________________________________________
 Consider it scheduled, Chief. I'll keep watch over this deadline:
-  [D][ ] valid leap day (by: Feb 29 2020)
+  [D][ ] valid leap day (by: Feb 29 2096)
 The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
@@ -884,7 +892,7 @@ My apologies, Chief. I need the event's end date to be after its start date.
 ________________________________________________
 ________________________________________________
 Here is the current agenda, Chief:
-1.[D][ ] valid leap day (by: Feb 29 2020)
+1.[D][ ] valid leap day (by: Feb 29 2096)
 ________________________________________________
 ________________________________________________
 The office is in order, Chief. Enjoy your evening.
@@ -939,7 +947,7 @@ ________________________________________________
 **Inputs:**
 ```text
 todo compare A | B
-deadline review C:\notes | archive /by 2019-10-18
+deadline review C:\notes | archive /by 2099-10-18
 bye
 ```
 
@@ -960,7 +968,7 @@ The agenda now contains 1 task.
 ________________________________________________
 ________________________________________________
 Consider it scheduled, Chief. I'll keep watch over this deadline:
-  [D][ ] review C:\notes | archive (by: Oct 18 2019)
+  [D][ ] review C:\notes | archive (by: Oct 18 2099)
 The agenda now contains 2 tasks.
 ________________________________________________
 ________________________________________________
@@ -968,14 +976,14 @@ The office is in order, Chief. Enjoy your evening.
 ________________________________________________
 Saved file:
 T | 0 | compare A \| B
-D | 0 | review C:\\notes \| archive | 2019-10-18
+D | 0 | review C:\\notes \| archive | 2099-10-18
 ```
 
 ## Test case: Load escaped storage fields
 
 **Aim:** Verifies that escaped pipe and backslash characters are decoded when saved tasks are loaded.
 
-**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && printf "%s\\n" "T | 1 | compare A \\| B" "D | 0 | review C:\\\\notes \\| archive | 2019-10-18" > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/Tony.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
+**Command:** `zsh -lc 'source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java 25.0.3.fx-zulu >/dev/null && mkdir -p data && printf "%s\\n" "T | 1 | compare A \\| B" "D | 0 | review C:\\\\notes \\| archive | 2099-10-18" > data/tony.txt && javac -d /private/tmp/tony-ui-classes src/main/java/tony/Tony.java src/main/java/tony/*/*.java && java -cp /private/tmp/tony-ui-classes tony.Tony'`
 
 **Inputs:**
 ```text
@@ -996,7 +1004,7 @@ ________________________________________________
 ________________________________________________
 Here is the current agenda, Chief:
 1.[T][X] compare A | B
-2.[D][ ] review C:\notes | archive (by: Oct 18 2019)
+2.[D][ ] review C:\notes | archive (by: Oct 18 2099)
 ________________________________________________
 ________________________________________________
 The office is in order, Chief. Enjoy your evening.

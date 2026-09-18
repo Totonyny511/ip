@@ -8,6 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -17,6 +20,9 @@ import org.junit.jupiter.api.io.TempDir;
  * Tests command processing through the entry point shared by the console and GUI.
  */
 public class TonyTest {
+    private static final Clock FIXED_CLOCK = Clock.fixed(
+            Instant.parse("2026-09-18T00:00:00Z"), ZoneOffset.UTC);
+
     @TempDir
     private Path temporaryDirectory;
 
@@ -37,16 +43,16 @@ public class TonyTest {
                 + "  [T][ ] read book\n"
                 + "The agenda now contains 1 task.", tony.getResponse("todo read book"));
         assertEquals("Consider it scheduled, Chief. I'll keep watch over this deadline:\n"
-                + "  [D][ ] submit report (by: Sep 20 2026)\n"
+                + "  [D][ ] submit report (by: Sep 20 2099)\n"
                 + "The agenda now contains 2 tasks.",
-                tony.getResponse("deadline submit report /by 2026-09-20"));
+                tony.getResponse("deadline submit report /by 2099-09-20"));
         assertEquals("Excellent, Chief. I've recorded this matter as complete:\n  [T][X] read book",
                 tony.getResponse("mark 1"));
         assertEquals("Here is the current agenda, Chief:\n"
                 + "1.[T][X] read book\n"
-                + "2.[D][ ] submit report (by: Sep 20 2026)", tony.getResponse("list"));
+                + "2.[D][ ] submit report (by: Sep 20 2099)", tony.getResponse("list"));
         assertEquals("I found these matching matters, Chief:\n"
-                + "1.[D][ ] submit report (by: Sep 20 2026)", tony.getResponse("find REPORT"));
+                + "1.[D][ ] submit report (by: Sep 20 2099)", tony.getResponse("find REPORT"));
         assertEquals("As requested, Chief. I've removed this matter:\n"
                 + "  [T][X] read book\n"
                 + "The agenda now contains 1 task.", tony.getResponse("delete 1"));
@@ -57,17 +63,17 @@ public class TonyTest {
     public void getResponse_deleteMultipleTasks_deletesOriginalPositionsInListOrder() {
         Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
         tony.getResponse("todo read book");
-        tony.getResponse("deadline submit report /by 2026-09-20");
-        tony.getResponse("event orientation /from 2026-09-21 /to 2026-09-22");
+        tony.getResponse("deadline submit report /by 2099-09-20");
+        tony.getResponse("event orientation /from 2099-09-21 /to 2099-09-22");
         tony.getResponse("todo buy groceries");
 
         assertEquals("As requested, Chief. I've removed these matters:\n"
-                + "  [D][ ] submit report (by: Sep 20 2026)\n"
+                + "  [D][ ] submit report (by: Sep 20 2099)\n"
                 + "  [T][ ] buy groceries\n"
                 + "The agenda now contains 2 tasks.", tony.getResponse("delete 4 2"));
         assertEquals("Here is the current agenda, Chief:\n"
                 + "1.[T][ ] read book\n"
-                + "2.[E][ ] orientation (from: Sep 21 2026 to: Sep 22 2026)",
+                + "2.[E][ ] orientation (from: Sep 21 2099 to: Sep 22 2099)",
                 tony.getResponse("list"));
     }
 
@@ -133,9 +139,9 @@ public class TonyTest {
                 + "  [T][ ] read book\n"
                 + "The agenda now contains 1 task.", tony.getResponse("  todo   read   book  "));
         assertEquals("Consider it scheduled, Chief. I'll keep watch over this deadline:\n"
-                + "  [D][ ] submit report (by: Sep 20 2026)\n"
+                + "  [D][ ] submit report (by: Sep 20 2099)\n"
                 + "The agenda now contains 2 tasks.",
-                tony.getResponse("deadline submit report   /by   2026-09-20"));
+                tony.getResponse("deadline submit report   /by   2099-09-20"));
         assertEquals("The office is in order, Chief. Enjoy your evening.", tony.getResponse("  bye  "));
     }
 
@@ -145,14 +151,40 @@ public class TonyTest {
         Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
 
         assertEquals("My apologies, Chief. Please specify /by only once.",
-                tony.getResponse("deadline report /by 2026-09-20 /by 2026-09-21"));
+                tony.getResponse("deadline report /by 2099-09-20 /by 2099-09-21"));
         assertEquals("My apologies, Chief. Please give me dates as yyyy-MM-dd, for example 2019-10-15.",
-                tony.getResponse("deadline report /by 2026-02-30"));
+                tony.getResponse("deadline report /by 2099-02-30"));
         assertEquals("My apologies, Chief. I need the event's end date to be after its start date.",
-                tony.getResponse("event meeting /from 2026-09-20 /to 2026-09-20"));
+                tony.getResponse("event meeting /from 2099-09-20 /to 2099-09-20"));
         assertEquals("My apologies, Chief. I need the event's end date to be after its start date.",
-                tony.getResponse("event meeting /from 2026-09-21 /to 2026-09-20"));
+                tony.getResponse("event meeting /from 2099-09-21 /to 2099-09-20"));
         assertEquals("Your agenda is clear, Chief. There are no matters on file.", tony.getResponse("list"));
+    }
+
+    /** Verifies that deadlines before today are rejected while today's date remains valid. */
+    @Test
+    public void getResponse_deadlineBeforeToday_rejectsOnlyPastDate() {
+        Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"), FIXED_CLOCK);
+
+        assertEquals("My apologies, Chief. I cannot schedule a deadline before today.",
+                tony.getResponse("deadline submit report /by 2026-09-17"));
+        assertEquals("Consider it scheduled, Chief. I'll keep watch over this deadline:\n"
+                + "  [D][ ] submit report (by: Sep 18 2026)\n"
+                + "The agenda now contains 1 task.",
+                tony.getResponse("deadline submit report /by 2026-09-18"));
+    }
+
+    /** Verifies that an event is rejected when either boundary date is before today. */
+    @Test
+    public void getResponse_eventDateBeforeToday_returnsErrorWithoutAddingEvent() {
+        Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"), FIXED_CLOCK);
+        String expected = "My apologies, Chief. I cannot schedule an event before today.";
+
+        assertEquals(expected,
+                tony.getResponse("event conference /from 2026-09-17 /to 2026-09-19"));
+        assertEquals(expected,
+                tony.getResponse("event conference /from 2026-09-18 /to 2026-09-17"));
+        assertEquals(0, tony.getTaskCount());
     }
 
     /** Verifies that the same task cannot be added twice, including with different letter case. */
@@ -213,18 +245,18 @@ public class TonyTest {
         Tony tony = new Tony(dataFile);
 
         assertEquals("Your calendar is updated, Chief. I've arranged this event:\n"
-                + "  [E][ ] orientation (from: Sep 21 2026 to: Sep 22 2026)\n"
+                + "  [E][ ] orientation (from: Sep 21 2099 to: Sep 22 2099)\n"
                 + "The agenda now contains 1 task.",
-                tony.getResponse("event orientation /from 2026-09-21 /to 2026-09-22"));
+                tony.getResponse("event orientation /from 2099-09-21 /to 2099-09-22"));
         tony.getResponse("mark 1");
         assertEquals("Understood, Chief. I've returned this matter to the active agenda:\n"
-                + "  [E][ ] orientation (from: Sep 21 2026 to: Sep 22 2026)",
+                + "  [E][ ] orientation (from: Sep 21 2099 to: Sep 22 2099)",
                 tony.getResponse("unmark 1"));
 
         Tony nextSession = new Tony(dataFile);
         assertEquals(0, nextSession.getCompletedTaskCount());
         assertEquals("Here is the current agenda, Chief:\n"
-                + "1.[E][ ] orientation (from: Sep 21 2026 to: Sep 22 2026)",
+                + "1.[E][ ] orientation (from: Sep 21 2099 to: Sep 22 2099)",
                 nextSession.getResponse("list"));
     }
 
@@ -264,11 +296,11 @@ public class TonyTest {
 
         assertEquals(deadlineError, tony.getResponse("deadline"));
         assertEquals(deadlineError, tony.getResponse("deadline report /by"));
-        assertEquals(deadlineError, tony.getResponse("deadline /by 2026-09-20"));
+        assertEquals(deadlineError, tony.getResponse("deadline /by 2099-09-20"));
         assertEquals(eventError, tony.getResponse("event"));
-        assertEquals(eventError, tony.getResponse("event meeting /to 2026-09-22"));
-        assertEquals(eventError, tony.getResponse("event meeting /from 2026-09-21"));
-        assertEquals(eventError, tony.getResponse("event meeting /from /to 2026-09-22"));
+        assertEquals(eventError, tony.getResponse("event meeting /to 2099-09-22"));
+        assertEquals(eventError, tony.getResponse("event meeting /from 2099-09-21"));
+        assertEquals(eventError, tony.getResponse("event meeting /from /to 2099-09-22"));
     }
 
     /** Verifies duplicate event parameters and invalid event dates are rejected. */
@@ -277,13 +309,13 @@ public class TonyTest {
         Tony tony = new Tony(temporaryDirectory.resolve("tasks.txt"));
 
         assertEquals("My apologies, Chief. Please specify /from and /to only once each.",
-                tony.getResponse("event meeting /from 2026-09-20 /from 2026-09-21 /to 2026-09-22"));
+                tony.getResponse("event meeting /from 2099-09-20 /from 2099-09-21 /to 2099-09-22"));
         assertEquals("My apologies, Chief. Please specify /from and /to only once each.",
-                tony.getResponse("event meeting /from 2026-09-20 /to 2026-09-21 /to 2026-09-22"));
+                tony.getResponse("event meeting /from 2099-09-20 /to 2099-09-21 /to 2099-09-22"));
         assertEquals("My apologies, Chief. Please give me dates as yyyy-MM-dd, for example 2019-10-15.",
-                tony.getResponse("event meeting /from tomorrow /to 2026-09-22"));
+                tony.getResponse("event meeting /from tomorrow /to 2099-09-22"));
         assertEquals("My apologies, Chief. Please give me dates as yyyy-MM-dd, for example 2019-10-15.",
-                tony.getResponse("event meeting /from 2026-09-20 /to tomorrow"));
+                tony.getResponse("event meeting /from 2099-09-20 /to tomorrow"));
     }
 
     /** Verifies descriptions over the supported limit are rejected for every task command. */
@@ -294,9 +326,9 @@ public class TonyTest {
         String expected = "My apologies, Chief. Please keep task descriptions to 500 characters or fewer.";
 
         assertEquals(expected, tony.getResponse("todo " + description));
-        assertEquals(expected, tony.getResponse("deadline " + description + " /by 2026-09-20"));
+        assertEquals(expected, tony.getResponse("deadline " + description + " /by 2099-09-20"));
         assertEquals(expected, tony.getResponse(
-                "event " + description + " /from 2026-09-20 /to 2026-09-21"));
+                "event " + description + " /from 2099-09-20 /to 2099-09-21"));
         assertEquals(0, tony.getTaskCount());
     }
 
