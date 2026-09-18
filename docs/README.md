@@ -71,6 +71,15 @@ not delete any of the selected tasks.
 - `[ ]` — Incomplete
 - `[X]` — Complete
 
+## Saving tasks
+
+Tony saves the task list after every successful add, mark, unmark, or delete command. The data is stored in
+`data/tony.txt`, relative to the folder from which Tony was started. Start Tony from the same folder each time to load
+the same task list.
+
+If Tony cannot read or write the data file, it displays a warning and keeps the current session usable. Changes made
+after a write warning are available only until the application closes.
+
 ## Ending the session
 
 Enter `bye` or select **Bye** to end the conversation. Your latest task changes will already have been saved.
