@@ -17,7 +17,7 @@ Use the **List**, **Help**, and **Bye** buttons for quick access to common actio
 
 ## Command format
 
-> [!NOTE]
+> **Command notation**
 >
 > - Words in `UPPER_CASE` are values you provide. For example, replace `DESCRIPTION` with `read a book`.
 > - Items in square brackets are optional.
