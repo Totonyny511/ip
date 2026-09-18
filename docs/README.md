@@ -35,8 +35,13 @@ To run Tony from its source code instead, open the project folder in a terminal 
 | Deadline | `deadline DESCRIPTION /by DATE` | `deadline submit report /by 2026-09-20` |
 | Event | `event DESCRIPTION /from START_DATE /to END_DATE` | `event orientation /from 2026-09-21 /to 2026-09-22` |
 
-For events, the end date must be later than the start date. Tony will not add a duplicate task with the same type and
-details.
+### Date rules
+
+- Use real calendar dates in `yyyy-MM-dd` format; for example, `2026-02-30` is rejected.
+- A deadline may be today or a future date, but it cannot be in the past.
+- An event's start and end dates cannot be in the past, and its end date must be later than its start date.
+
+Tony will not add a duplicate task with the same type and details.
 
 ## Viewing and finding tasks
 
