@@ -11,11 +11,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -36,6 +38,12 @@ public class Main extends Application {
 
     /** Width below which the interface uses smaller conversation gutters. */
     private static final double COMPACT_WIDTH = 500;
+
+    /** Initial width of the command-reference dialog. */
+    private static final double HELP_DIALOG_WIDTH = 720;
+
+    /** Width needed to display the command-reference dialog's Close button without truncation. */
+    private static final double HELP_CLOSE_BUTTON_WIDTH = 90;
 
     /** Contains the messages in conversation order. */
     private final VBox dialogContainer = new VBox();
@@ -239,6 +247,12 @@ public class Main extends Application {
         commands.setHgap(14);
         commands.setVgap(8);
         commands.getStyleClass().add("command-help-grid");
+        ColumnConstraints syntaxColumn = new ColumnConstraints();
+        syntaxColumn.setMinWidth(Region.USE_PREF_SIZE);
+        ColumnConstraints descriptionColumn = new ColumnConstraints();
+        descriptionColumn.setMinWidth(Region.USE_PREF_SIZE);
+        descriptionColumn.setHgrow(Priority.ALWAYS);
+        commands.getColumnConstraints().addAll(syntaxColumn, descriptionColumn);
         addCommandHelpRow(commands, 0, "todo <description>", "Add a task without a date");
         addCommandHelpRow(commands, 1, "deadline <description> /by <yyyy-MM-dd>", "Add a deadline");
         addCommandHelpRow(commands, 2,
@@ -255,22 +269,25 @@ public class Main extends Application {
         hint.getStyleClass().add("command-help-hint");
 
         VBox content = new VBox(12, commands, hint);
-        helpDialog.getDialogPane().setContent(content);
-        helpDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-        helpDialog.getDialogPane().setPrefWidth(560);
-        helpDialog.getDialogPane().getStyleClass().add("command-help-dialog");
-        helpDialog.getDialogPane().getStylesheets().setAll(helpButton.getScene().getStylesheets());
+        DialogPane dialogPane = helpDialog.getDialogPane();
+        dialogPane.setContent(content);
+        dialogPane.getButtonTypes().add(ButtonType.CLOSE);
+        dialogPane.setPrefWidth(HELP_DIALOG_WIDTH);
+        dialogPane.setMinWidth(HELP_DIALOG_WIDTH);
+        dialogPane.getStyleClass().add("command-help-dialog");
+        dialogPane.getStylesheets().setAll(helpButton.getScene().getStylesheets());
+        Button closeButton = (Button) dialogPane.lookupButton(ButtonType.CLOSE);
+        closeButton.setMinWidth(HELP_CLOSE_BUTTON_WIDTH);
+        closeButton.setPrefWidth(HELP_CLOSE_BUTTON_WIDTH);
         helpDialog.showAndWait();
     }
 
     /** Adds one formatted command and its purpose to the help reference. */
     private static void addCommandHelpRow(GridPane commands, int row, String syntax, String description) {
         Label syntaxLabel = new Label(syntax);
-        syntaxLabel.setWrapText(true);
         syntaxLabel.getStyleClass().add("command-syntax");
 
         Label descriptionLabel = new Label(description);
-        descriptionLabel.setWrapText(true);
         descriptionLabel.getStyleClass().add("command-description");
         commands.addRow(row, syntaxLabel, descriptionLabel);
     }
