@@ -80,6 +80,17 @@ the same task list.
 If Tony cannot read or write the data file, it displays a warning and keeps the current session usable. Changes made
 after a write warning are available only until the application closes.
 
+## Troubleshooting
+
+- **A command is rejected:** Select **Help** and compare the command with the displayed format. Tony's error response
+  also explains which value is missing or invalid.
+- **A task number is rejected:** Run `list` and use the number shown beside the task. Task numbers can change after a
+  deletion.
+- **Saved tasks are missing:** Close Tony and start it again from the folder that contains the expected `data`
+  directory.
+- **The application does not start:** Run `java -version` and confirm that Java 25 is active before running the JAR
+  again from a terminal.
+
 ## Ending the session
 
 Enter `bye` or select **Bye** to end the conversation. Your latest task changes will already have been saved.
